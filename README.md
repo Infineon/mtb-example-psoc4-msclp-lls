@@ -5,19 +5,19 @@ This code example demonstrates an implementation of capacitive sensors to measur
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-psoc4-msclp-lls)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6ImRhc2F2aWppdCIsIkRvYyB2ZXJzaW9uIjoiMi4xLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aSIsIkRvYyB2ZXJzaW9uIjoiMy4wLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
 
 
 ## Requirements
 
 
-- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.4 or later (tested with v3.4)
+- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.5 or later 
 
-   > **Note:** This code example requires ModusToolbox&trade; v3.4 and is not backward compatible with v3.3 or older.
+   > **Note:** This code example requires ModusToolbox&trade; v3.5 and is not backward compatible with older versions.
 
-- Board support package (BSP) minimum required version: 3.2.0
+- Board support package (BSP) minimum required version: 3.3.0
 - Programming language: C
-- Associated parts: [PSOC&trade; 4000T](https://www.infineon.com/002-33949)
+- Associated parts: [PSOC&trade; 4000T](https://www.infineon.com/002-33949), [PSOC&trade; 4100T Plus](https://www.infineon.com/002-39671) 
 
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
@@ -32,11 +32,13 @@ This code example demonstrates an implementation of capacitive sensors to measur
 
 
 - [PSOC&trade; 4000T Multisense Control Board](https://www.infineon.com/CY8CPROTO-040T-MS) (`CY8CPROTO-040T-MS`) – Default value of `TARGET`
-
+- [PSOC&trade; 4100T Plus CAPSENSE&trade; Prototyping Kit](https://www.infineon.com/CY8CPROTO-041TP) (`CY8CPROTO-041TP`)
 
 ## Hardware setup
 
-This example uses the liquid level sensing kit with the multisense control board's default configuration. See the kit user guide to ensure that the board is configured correctly.  
+This example uses the board's default configuration. See the kit user guide to configure the required operating voltage on the kit and to setup the VDDA supply voltage refer to section [Set up the VDDA supply voltage and debug mode in Device Configurator](#set-up-the-vdda-supply-voltage-and-debug-mode-in-device-configurator).
+
+This application is tuned to perform optimally at the default voltage. However, you can observe the basic functionality at other supported voltages.
 
 > **Note:** Some PSOC&trade; 4 kits ship with KitProg2 installed. ModusToolbox&trade; requires KitProg3. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the [Firmware Loader](https://github.com/Infineon/Firmware-loader) GitHub repository. If you do not upgrade, you will see an error like "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
 
@@ -44,8 +46,6 @@ This example uses the liquid level sensing kit with the multisense control board
 ## Software setup
 
 See the [ModusToolbox&trade; tools package installation guide](https://www.infineon.com/ModusToolboxInstallguide) for information about installing and configuring the tools package.
-
-This example requires [ModusToolbox™ CAPSENSE™ and Multi-Sense Pack](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.modustoolboxpackmultisense) to be installed.
 
 
 ## Using the code example
@@ -158,7 +158,7 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
 ## Operation
 
-1. Ensure the [PSOC&trade; 4000T Multisense Control Board](https://www.infineon.com/CY8CPROTO-040T-MS) is connected with the Liquid Level Sensing Flex PCB.
+1. Ensure the board is connected with the Liquid Level Sensing Flex PCB.
    >**Note:** If a custom container is used other than the bottle provided with the kit, the system may need a Factory Calibration as menitoned in the section [Factory calibration](#factory-calibration).
 
 2. Connect the board to your PC using the provided USB cable through the KitProg3 USB connector.
@@ -194,9 +194,9 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
 4. After programming, the application starts automatically.
 
-   > **Note:** After programming, you see the following error message if debug mode is disabled. This can be ignored or enabling the debug mode will solve this error.
+   > **Note:** After programming, you may see the following error message if debug mode is disabled, see **Table 6** for the default debug configuration in the supported kits. This can be ignored or enabling debug solves this error.
 
-   ```bash
+   ``` c
    "Error: Error connecting Dp: Cannot read IDR"
    ```
 
@@ -382,7 +382,7 @@ Perform the following to tune the **Liquid Level Sensing Widget**:
 
    Select the **LiquidLevel0** from the left pane and set the following:
 
-   **Table 4. Initial widget parameter setting LiquidLevel0**
+   **Table 3. Initial widget parameter setting LiquidLevel0**
 
    Parameter | Setting | Comment
    :-------- |:----------- |:-----------
@@ -409,7 +409,7 @@ Perform the following to tune the **Liquid Level Sensing Widget**:
 
    Select the **LiquidLevel0_FR** from the left pane and set the following:
 
-   **Table 5. Initial widget parameter setting LiquidLevel0_FR**
+   **Table 4. Initial widget parameter setting LiquidLevel0_FR**
 
    Parameter | Setting | Comment
    :-------- |:----------- |:-----------
@@ -489,11 +489,11 @@ To set the proper sense clock frequency, follow these steps:
    
    <br>
 
-   **Table 7. Sense clock divider settings obtained for supported kits**
+   **Table 5. Sense clock divider settings obtained for supported kits**
 
-   Parameter |CY8CPROTO-040T-MS
-   :-------- |:----------- 
-   Sense clock divider | 128
+   Parameter |CY8CPROTO-040T-MS |CY8CPROTO-041TP
+   :-------- |:----------- |:-----------
+   Sense clock divider | 128 | 128
    
 
 ### Stage 3: Fine tune for required SNR
@@ -538,7 +538,19 @@ The one-time calibration procedure is outlined in **Section 6:	Liquid-level Fact
 
 ## Debugging
 
-You can debug the example to step through the code.
+You can debug the example to step through the code.In the IDE, use the **\<Application Name> Debug (KitProg3_MiniProg4)** configuration in the **Quick Panel**. For details, see the "Program and debug" section in the [Eclipse IDE for ModusToolbox&trade; user guide](https://www.infineon.com/MTBEclipseIDEUserGuide).
+
+To enable the debug option, see the [Setup VDDA and Debug mode](#set-up-the-vdda-supply-voltage-and-debug-mode-in-device-configurator) section. To achieve lower power consumption, it is recommended to disable it when not debugging.
+
+see, **Table 6** for the default debug configuration in the supported kits,
+
+**Table 6. Debug mode option status**
+
+   Kit  | Debug mode 
+   :----| :----------
+   CY8CPROTO-040T-MS | Enabled
+   CY8CPROTO-041TP | Enabled
+
 
 
 <details><summary><b>In Eclipse IDE</b></summary>
@@ -586,18 +598,17 @@ The Firmware scans the `Liquid Level Sensing` widget and the `Liquid Level Sensi
 
 1. Open Device Configurator from the **Quick Panel**.
 
-2. Go to the **System** tab. Select the **Power** resource, and set the VDDA value under **Operating conditions** as shown in **Figure 28**.
+2. Go to the **System** tab. Select the **Power** resource, and set the VDDA value under **Operating conditions** as shown in **Figure 23**.
 
    **Figure 23. Setting the VDDA supply in the System tab of Device Configurator**
 
    <img src="images/vdda-setting.png" alt="Figure 23" width="800"/>
 
-3. Enable debug mode to enable SWD pins, as shown in **Figure 24**.
+3. By default, the debug mode is disabled for this application to reduce power consumption. Enable the debug mode to enable the SWD pins, as shown in **Figure 24**:
 
-   **Figure 24. Enable debug mode in the System tab of Device Configurator**
+   **Figure 24. Enable Debug mode in the System tab of Device Configurator**
 
-   <img src="images/debug.png" alt="Figure 24" width="800"/>
-
+<img src="images/debug.png" alt="Figure 24" width="800"/>
 
 ### Resources and settings
 
@@ -608,7 +619,7 @@ The Firmware scans the `Liquid Level Sensing` widget and the `Liquid Level Sensi
    
    <br>
 
-**Table 8. Application resources**
+**Table 7. Application resources**
 
  Resource  |  Alias/object     |    Purpose
  :-------- | :-------------    | :------------
@@ -629,7 +640,7 @@ CAPSENSE&trade; (MSCLP0) | CYBSP_MSCLP0 | CAPSENSE&trade; driver to interact wit
 
 Resources  | Links
 -----------|----------------------------------
-Application notes  | [AN79953](https://www.infineon.com/AN79953) – Getting started with PSOC&trade; 4 <br> [AN85951](https://www.infineon.com/AN85951) – PSOC&trade; 4 and PSOC&trade; 6 MCU CAPSENSE&trade; design guide <br> [AN239805](https://www.infineon.com/AN239805) – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade; <br>[AN234231](https://www.infineon.com/AN234231) – Achieving lowest-power capacitive sensing with PSOC&trade; 4000T <br> [AN92239](https://www.infineon.com/AN92239) – Proximity sensing with CAPSENSE&trade;
+Application notes  | [AN79953](https://www.infineon.com/AN79953) – Getting started with PSOC&trade; 4 <br> [AN85951](https://www.infineon.com/AN85951) – PSOC&trade; 4 and PSOC&trade; 6 MCU CAPSENSE&trade; design guide <br> [AN239805](https://www.infineon.com/AN239805) – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade; <br>[AN234231](https://www.infineon.com/AN234231) – PSOC™ 4 CAPSENSE™ ultra-low-power capacitive sensing techniques <br> [AN92239](https://www.infineon.com/AN92239) – Proximity sensing with CAPSENSE&trade;
 Code examples  | [Using ModusToolbox&trade;](https://github.com/Infineon/Code-Examples-for-ModusToolbox-Software) on GitHub
 Device documentation | [PSOC&trade; 4 datasheets](https://www.infineon.com/cms/en/search.html#!view=downloads&term=psoc4&doc_group=Data%20Sheet) <br>[PSOC&trade; 4 technical reference manuals](https://www.infineon.com/cms/en/search.html#!view=downloads&term=psoc4&doc_group=Additional%20Technical%20Information)
 Development kits | Select your kits from the [Evaluation board finder](https://www.infineon.com/cms/en/design-support/finder-selection-tools/product-finder/evaluation-board)
@@ -654,6 +665,7 @@ Document title: *CE240535* – *PSOC&trade; 4: MSCLP CAPSENSE&trade; liquid leve
  1.0.0   | New code example
  2.0.0   | Major update to support ModusToolbox&trade; v3.3. This version is not backward compatible with previous versions of ModusToolbox&trade;
  2.1.0   | Removed Foam rejection Calibration process
+ 3.0.0   |Added support for CY8CPROTO-041TP Prototyping Kit. Major update to support ModusToolbox&trade; v3.5. This version is not backward compatible with previous versions of ModusToolbox&trade;
  <br>
 
 
