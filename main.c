@@ -46,11 +46,85 @@
 #include "cybsp.h"
 #include "cycfg.h"
 #include "cycfg_capsense.h"
-
+#include "cy_em_eeprom.h"
 /*******************************************************************************
  * User configurable Macros
  ********************************************************************************/
 
+/*******************************************************************************
+ * One time factory CDAC calibration Macros
+ ********************************************************************************/
+
+/* It is mandatory to perform one time factory CDAC calibration for liquid level widgets on each devices. 
+ * Using this macro "LLS_FACTORY_CALIBRATION_ENABLE" helps to identify the relevant source code involved in
+ * enabling this emulated EERPROM based one time factory calibration.
+ * Not recommended to disable this macro. 
+ */
+#define LLS_FACTORY_CALIBRATION_ENABLE     (1u) // Don't set this to 0
+
+#if LLS_FACTORY_CALIBRATION_ENABLE
+
+/* ASCII "P" */
+#define ASCII_P                     (0x50)
+
+#define POWERON_STATE_OFFSET        (0u)
+#define POWERON_STATUS_SIZE         (1u)
+
+#define WD_CDAC_PARMS_SIZE              (1u+ 1u +1u +2u ) // Status+CRef+CFine+CComp_div
+#define TOTAL_WD_CDAC_PARMS_SIZE        (CY_CAPSENSE_TOTAL_WIDGET_COUNT * WD_CDAC_PARMS_SIZE)
+#define SNS_CDAC_PARMS_SIZE             (CY_CAPSENSE_SENSOR_COUNT * 1u) // CComp
+#define TOTAL_CDAC_PARMS_SIZE           (TOTAL_WD_CDAC_PARMS_SIZE + SNS_CDAC_PARMS_SIZE)
+
+#define EEPROM_STATE_OFFSET         (0u)
+#define EEPROM_DATA_OFFSET          (1u)
+#define STATE_VALID                 (1u)
+
+/*******************************************************************************
+ * EMULATED EEPROM configuration parameters
+ ********************************************************************************/
+/* Emulated EEPROM Configuration details. All the sizes mentioned are in bytes.
+ * For details on how to configure these values refer to cy_em_eeprom.h. The
+ * middleware documentation is provided in Emulated EEPROM API Reference Manual.
+ * The user can access it from the Documentation section in the Quick Panel.
+ */
+
+/* Logical Size of Emulated EEPROM in bytes */
+#define LOGICAL_EM_EEPROM_SIZE      POWERON_STATUS_SIZE + TOTAL_CDAC_PARMS_SIZE
+#define LOGICAL_EM_EEPROM_START     (0u)
+
+#define EM_EEPROM_SIZE   ((TOTAL_CDAC_PARMS_SIZE % CY_EM_EEPROM_FLASH_SIZEOF_ROW) ? ((TOTAL_CDAC_PARMS_SIZE / CY_EM_EEPROM_FLASH_SIZEOF_ROW) + 1) * CY_EM_EEPROM_FLASH_SIZEOF_ROW  : (TOTAL_CDAC_PARMS_SIZE / CY_EM_EEPROM_FLASH_SIZEOF_ROW) *  CY_EM_EEPROM_FLASH_SIZEOF_ROW)
+
+/*If enabled (1 - enabled, 0 - disabled), a checksum (stored in a row) is calculated on each row of data,
+ * while a redundant copy of Em_EEPROM is stored in another location.
+ * When data is read, first the checksum is checked. If that checksum is bad,
+ and the redundant copy's checksum is good, the copy is restored.
+ */
+#define REDUNDANT_COPY              (1u)
+
+/*If enabled (1 - enabled, 0 - disabled), the blocking writes to nvm are used in the design.
+ * Otherwise, non-blocking nvm writes are used. From the user's perspective,
+ * the behavior of blocking and non-blocking writes are the same - the difference is that
+ * the non-blocking writes do not block the interrupts.
+ Note
+ Non-blocking nvm write is only supported by PSoC 6.
+ */
+#define BLOCKING_WRITE              (1u)
+
+/*The higher the factor is, the more nvm is used, but a higher number of erase/write cycles can be done on Em_EEPROM.
+ * Multiply this number by the datasheet write endurance spec to determine the max of write cycles.
+ * The amount of wear leveling from 1 to 10. 1 means no wear leveling is used.
+ */
+#define WEAR_LEVELLING_FACTOR       (2u)
+
+/*Simple mode, when enabled (1 - enabled, 0 - disabled),
+ * means no additional service information is stored by the Em_EEPROM middleware
+ * like checksums, headers, a number of writes, etc.
+ */
+#define SIMPLE_MODE                 (0u)
+
+#define EM_EEPROM_PHYSICAL_SIZE     (CY_EM_EEPROM_GET_PHYSICAL_SIZE(EM_EEPROM_SIZE, SIMPLE_MODE, WEAR_LEVELLING_FACTOR, REDUNDANT_COPY))
+
+#endif
 
 /*******************************************************************************
  * Fixed Macros
@@ -58,15 +132,33 @@
 #define CAPSENSE_MSC0_INTR_PRIORITY     (3u)
 #define CY_ASSERT_FAILED                (0u)
 
-
 /* EZI2C interrupt priority must be higher than CAPSENSE&trade; interrupt. */
 #define EZI2C_INTR_PRIORITY             (2u)
-
 
 /*******************************************************************************
  * Global Variables
  *******************************************************************************/
 cy_stc_scb_ezi2c_context_t ezi2c_context;
+
+#if LLS_FACTORY_CALIBRATION_ENABLE
+
+cy_stc_eeprom_context_t em_eeprom_context;
+
+static cy_stc_eeprom_config_t em_eeprom_config = { .eepromSize = EM_EEPROM_SIZE, /* 256 bytes */
+.blockingWrite = BLOCKING_WRITE, /* Blocking writes enabled */
+.redundantCopy = REDUNDANT_COPY, /* Redundant copy enabled */
+.wearLevelingFactor = WEAR_LEVELLING_FACTOR, /* Wear levelling factor of 2 */
+.simpleMode = SIMPLE_MODE, /* Simple mode disabled */
+};
+
+/* EEPROM storage Emulated EEPROM flash. */
+CY_ALIGN( CY_EM_EEPROM_FLASH_SIZEOF_ROW)
+const uint8_t em_eeprom_storage[EM_EEPROM_PHYSICAL_SIZE] = { 0u };
+
+/* RAM arrays for holding Emulated EEPROM read and write data respectively. */
+uint8_t eeprom_data[LOGICAL_EM_EEPROM_SIZE];
+
+#endif
 
 /*******************************************************************************
  * Function Prototypes
@@ -75,6 +167,12 @@ static void initialize_capsense(void);
 static void capsense_msc0_isr(void);
 static void ezi2c_isr(void);
 static void initialize_capsense_tuner(void);
+
+#if LLS_FACTORY_CALIBRATION_ENABLE
+static void initialize_em_eeprom(void);
+static uint32_t get_eeprom_buffer_position(uint32_t wd_id);
+static void liquid_level_OneTime_Calibration(void);
+#endif
 
 /*******************************************************************************
  * Function Name: main
@@ -108,6 +206,10 @@ int main(void)
     /* Enable global interrupts */
     __enable_irq();
 
+#if LLS_FACTORY_CALIBRATION_ENABLE
+    initialize_em_eeprom();
+#endif
+
     /* Initialize EZI2C */
     initialize_capsense_tuner();
 
@@ -116,17 +218,23 @@ int main(void)
 
     for (;;)
     {
-    	uint32_t level_w_FR, level_wo_FR;
+        uint32_t level_w_FR, level_wo_FR;
 
         /* Scan the normal Liquid Level Widget */
-    	Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_WDGT_ID, &cy_capsense_context);
+        Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_WDGT_ID,
+                &cy_capsense_context);
         /* Wait until the scan is finished */
-        while(Cy_CapSense_IsBusy(&cy_capsense_context)) {}
+        while (Cy_CapSense_IsBusy(&cy_capsense_context))
+        {
+        }
 
         /* Scan the Foam Rejection Widget */
-        Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_FR_WDGT_ID, &cy_capsense_context);
+        Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_FR_WDGT_ID,
+                &cy_capsense_context);
         /* Wait until the scan is finished */
-        while(Cy_CapSense_IsBusy(&cy_capsense_context)) {}
+        while (Cy_CapSense_IsBusy(&cy_capsense_context))
+        {
+        }
 
         /* Process all th widgets */
         Cy_CapSense_ProcessAllWidgets(&cy_capsense_context);
@@ -139,8 +247,8 @@ int main(void)
         level_w_FR = CY_CAPSENSE_LIQUIDLEVEL0_FR_PTRPOSITION_VALUE->x;
 
         /* keep the compiler happy */
-        (void)level_wo_FR;
-        (void)level_w_FR;
+        (void) level_wo_FR;
+        (void) level_w_FR;
 
     }
 }
@@ -158,11 +266,8 @@ static void initialize_capsense(void)
     cy_capsense_status_t status = CY_CAPSENSE_STATUS_SUCCESS;
 
     /* CAPSENSE interrupt configuration MSCLP 0 */
-    const cy_stc_sysint_t capsense_msc0_interrupt_config =
-    {
-            .intrSrc = CY_MSCLP0_LP_IRQ,
-            .intrPriority = CAPSENSE_MSC0_INTR_PRIORITY,
-    };
+    const cy_stc_sysint_t capsense_msc0_interrupt_config = { .intrSrc =
+    CY_MSCLP0_LP_IRQ, .intrPriority = CAPSENSE_MSC0_INTR_PRIORITY, };
 
     /* Capture the MSC HW block and initialize it to the default state. */
     status = Cy_CapSense_Init(&cy_capsense_context);
@@ -174,11 +279,16 @@ static void initialize_capsense(void)
         NVIC_ClearPendingIRQ(capsense_msc0_interrupt_config.intrSrc);
         NVIC_EnableIRQ(capsense_msc0_interrupt_config.intrSrc);
 
+#if LLS_FACTORY_CALIBRATION_ENABLE
+        /* Verify the EEPROM and perform one time factory calibration*/
+        liquid_level_OneTime_Calibration();
+#endif
         /* Initialize the CAPSENSE firmware modules. */
         status = Cy_CapSense_Enable(&cy_capsense_context);
+
     }
 
-    if(status != CY_CAPSENSE_STATUS_SUCCESS)
+    if (status != CY_CAPSENSE_STATUS_SUCCESS)
     {
         /* This status could fail before tuning the sensors correctly.
          * Ensure that this function passes after the CAPSENSE sensors are tuned
@@ -210,15 +320,13 @@ static void initialize_capsense_tuner(void)
     cy_en_scb_ezi2c_status_t status = CY_SCB_EZI2C_SUCCESS;
 
     /* EZI2C interrupt configuration structure */
-    const cy_stc_sysint_t ezi2c_intr_config =
-    {
-            .intrSrc = CYBSP_EZI2C_IRQ,
-            .intrPriority = EZI2C_INTR_PRIORITY,
-    };
+    const cy_stc_sysint_t ezi2c_intr_config = { .intrSrc = CYBSP_EZI2C_IRQ,
+            .intrPriority = EZI2C_INTR_PRIORITY, };
 
     /* Initialize the EzI2C firmware module */
-    status = Cy_SCB_EZI2C_Init(CYBSP_EZI2C_HW, &CYBSP_EZI2C_config, &ezi2c_context);
-    if(status != CY_SCB_EZI2C_SUCCESS)
+    status = Cy_SCB_EZI2C_Init(CYBSP_EZI2C_HW, &CYBSP_EZI2C_config,
+            &ezi2c_context);
+    if (status != CY_SCB_EZI2C_SUCCESS)
     {
         CY_ASSERT(CY_ASSERT_FAILED);
     }
@@ -230,7 +338,7 @@ static void initialize_capsense_tuner(void)
      * the Tuner or the Bridge Control Panel can read this buffer but you can
      * connect only one tool at a time.
      */
-    Cy_SCB_EZI2C_SetBuffer1(CYBSP_EZI2C_HW, (uint8_t *)&cy_capsense_tuner,
+    Cy_SCB_EZI2C_SetBuffer1(CYBSP_EZI2C_HW, (uint8_t*) &cy_capsense_tuner,
             sizeof(cy_capsense_tuner), sizeof(cy_capsense_tuner),
             &ezi2c_context);
 
@@ -249,5 +357,149 @@ static void ezi2c_isr(void)
     Cy_SCB_EZI2C_Interrupt(CYBSP_EZI2C_HW, &ezi2c_context);
 }
 
+#if LLS_FACTORY_CALIBRATION_ENABLE
+
+/*******************************************************************************
+ * Function Name: initialize_em_eeprom
+ ********************************************************************************
+ * Summary:
+ * Initializes the emulated EEPROM to store the ne time factory calibrated values 
+ * and verified the first power on condition 
+ *
+ *******************************************************************************/
+static void initialize_em_eeprom(void)
+{
+    cy_en_em_eeprom_status_t em_eeprom_status;
+
+    /* Initialize the flash start address in Emulated EEPROM configuration structure*/
+    em_eeprom_config.userFlashStartAddr = (uint32_t) em_eeprom_storage;
+
+    /* Initialize Emulated EEPROM */
+    em_eeprom_status = Cy_Em_EEPROM_Init(&em_eeprom_config, &em_eeprom_context);
+
+    /* Read the factory calibrated values from EEPROM*/
+    Cy_Em_EEPROM_Read(LOGICAL_EM_EEPROM_START, eeprom_data,
+    LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
+
+    // Verify for the first power on condition
+    if (ASCII_P != eeprom_data[POWERON_STATE_OFFSET])
+    {
+        /* Erase Emulated EEPROM */
+        em_eeprom_status = Cy_Em_EEPROM_Erase(&em_eeprom_context);
+        eeprom_data[POWERON_STATE_OFFSET] = 'P';
+        /* Write the factory calibrated values to EEPROM*/
+        Cy_Em_EEPROM_Write(LOGICAL_EM_EEPROM_START, eeprom_data,
+        POWERON_STATUS_SIZE, &em_eeprom_context);
+    }
+
+    /* Emulated EEPROM init failed. Stop program execution */
+    if (em_eeprom_status != CY_EM_EEPROM_SUCCESS)
+    {
+        CY_ASSERT(CY_ASSERT_FAILED);
+    }
+}
+#endif
+
+#if LLS_FACTORY_CALIBRATION_ENABLE
+
+/*******************************************************************************
+ * Function Name: get_eeprom_buffer_position
+ ********************************************************************************
+ * Summary:
+ * Returns the EEPROM pointer location of the widget
+ *
+ *******************************************************************************/
+static uint32_t get_eeprom_buffer_position(uint32_t wd_id)
+{
+    uint32_t wd_index;
+    uint32_t buffer_index = 0;
+
+    for (wd_index = 0u; wd_index < wd_id; wd_index++)
+    {
+        buffer_index += (WD_CDAC_PARMS_SIZE
+                + cy_capsense_context.ptrWdConfig[wd_index].numSns);
+    }
+    return buffer_index;
+}
+#endif
+
+#if LLS_FACTORY_CALIBRATION_ENABLE
+/*******************************************************************************
+ * Function Name: liquid_level_OneTime_Calibration
+ ********************************************************************************
+ * Summary:
+ * Verifies and performs the one time factory auto calibration status of the liquid level widgets
+ *
+ *******************************************************************************/
+static void liquid_level_OneTime_Calibration(void)
+{
+    uint8_t *ptr_eeprom_data;
+    uint32_t wd_id = 0u;
+    uint8_t calib_status = 0u;
+
+    /* Read the factory calibrated values from EEPROM*/
+    Cy_Em_EEPROM_Read(LOGICAL_EM_EEPROM_START, eeprom_data,
+    LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
+
+    for (wd_id = 0u; wd_id < CY_CAPSENSE_TOTAL_WIDGET_COUNT; wd_id++)
+    {
+        /* Apply one time calibration only to Liquid level widgets */
+        if ((uint8_t) CY_CAPSENSE_WD_LIQUID_LEVEL_E
+                == cy_capsense_context.ptrWdConfig[wd_id].wdType)
+        {
+            /* Get the EEPROM pointer location of the widget*/
+            ptr_eeprom_data = &eeprom_data[get_eeprom_buffer_position(wd_id)
+                    + POWERON_STATUS_SIZE];
+
+            /* Verify the LLS CDAC calibration and level calibration completion*/
+            if (Cy_CapSense_IsLlwCalibrationValid(wd_id, &cy_capsense_context))
+            {
+                if (ptr_eeprom_data[EEPROM_STATE_OFFSET] == STATE_VALID)
+                {
+                    /* Set the status flag to ready state before writing into EEPROM.*/
+                    Cy_CapSense_SetWidgetCalibrationState(wd_id,
+                    STATE_VALID, &cy_capsense_context);
+
+                    /* Update CDAC parameters with the factory calibrated values read from EEPROM */
+                    Cy_CapSense_WriteWidgetCdacParam(
+                            &ptr_eeprom_data[EEPROM_DATA_OFFSET], wd_id,
+                            &cy_capsense_context);
+                }
+                else
+                {
+                    /* Call Cy_CapSense_Enable() only once and use the CDAC values of widgets to store in EEPROM */
+                    if (calib_status == 0u)
+                    {
+                        /* Initialize the CAPSENSE firmware modules. */
+                        Cy_CapSense_Enable(&cy_capsense_context);
+                        calib_status = 1;
+                    }
+                    /* Reads the calibrated values from context to eeprom buffer*/
+                    Cy_CapSense_ReadWidgetCdacParam(
+                            &ptr_eeprom_data[EEPROM_DATA_OFFSET], wd_id,
+                            &cy_capsense_context);
+
+                    /* Set the status flag to valid before writing into EEPROM*/
+                    ptr_eeprom_data[EEPROM_STATE_OFFSET] = STATE_VALID;
+
+                    /* Update the local calibration status flag */
+                    Cy_CapSense_SetWidgetCalibrationState(wd_id,
+                    STATE_VALID, &cy_capsense_context);
+
+                    /* Write the factory calibrated values to EEPROM*/
+                    Cy_Em_EEPROM_Write(LOGICAL_EM_EEPROM_START, eeprom_data,
+                    LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
+                }
+            }
+        }
+        else
+        {
+            /* Update the local calibration status flag to avoid auto calibration of LLS widget */
+            Cy_CapSense_SetWidgetCalibrationState(wd_id,
+            STATE_VALID, &cy_capsense_context);
+        }
+    }
+}
+#endif
 
 /* [] END OF FILE */
