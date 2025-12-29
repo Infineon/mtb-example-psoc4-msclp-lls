@@ -2,22 +2,24 @@
 
 This code example demonstrates an implementation of capacitive sensors to measure the depth of water-based liquids in nonconductive containers. Mounted on or near the container exterior, these sensors provide accurate, real-time monitoring of liquid fill levels, while also rejecting foam interference and eliminating the need for physical contact with the liquid.
 
-
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-psoc4-msclp-lls)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aSIsIkRvYyB2ZXJzaW9uIjoiNC4wLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
+[Provide feedback on this code example.](https://yourvoice.infineon.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aS55YXNodmlAaW5maW5lb24uY29tIiwiRG9jIHZlcnNpb24iOiI1LjAuMCIsIkRvYyBMYW5ndWFnZSI6IkVuZ2xpc2giLCJEb2MgRGl2aXNpb24iOiJNQ0QiLCJEb2MgQlUiOiJJQ1ciLCJEb2MgRmFtaWx5IjoiUFNPQyJ9)
 
 
 ## Requirements
 
+- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.7 or later 
 
-- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.6 or later 
+   > **Note:** This code example requires ModusToolbox&trade; v3.7 and is not backward compatible with older versions
 
-   > **Note:** This code example requires ModusToolbox&trade; v3.6 and is not backward compatible with older versions.
+- [ModusToolbox&trade; CAPSENSE&trade; and Multi-Sense Pack](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.modustoolboxpackmultisense) for ModusToolbox&trade; v3.7 or later
+
+   > **Note:** This pack contains CAPSENSE&trade; Configurator,  CAPSENSE&trade; Tuner and Sensor designer tools.
 
 - Board support package (BSP) minimum required version: 3.3.0
 - Programming language: C
-- Associated parts: [PSOC&trade; 4000T](https://www.infineon.com/products/microcontroller/32-bit-psoc-arm-cortex/psoc-4-mcu/4000/4000t), [PSOC&trade; 4100T Plus](https://www.infineon.com/products/microcontroller/32-bit-psoc-arm-cortex/psoc-4-mcu/4100/psoc-4100t-plus) 
+- Associated parts: [PSOC&trade; 4000T](https://www.infineon.com/products/microcontroller/32-bit-psoc-arm-cortex/psoc-4-mcu/4000/4000t), [PSOC&trade; 4100T Plus](https://www.infineon.com/products/microcontroller/32-bit-psoc-arm-cortex/psoc-4-mcu/4100/psoc-4100t-plus)
 
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
@@ -27,9 +29,7 @@ This code example demonstrates an implementation of capacitive sensors to measur
 - IAR C/C++ Compiler v9.50.2 (`IAR`)
 
 
-
 ## Supported kits (make variable 'TARGET')
-
 
 - [PSOC&trade; 4000T Multi-Sense Prototyping Kit](https://www.infineon.com/CY8CPROTO-040T-MS) (`CY8CPROTO-040T-MS`) – Default value of `TARGET`
 - [PSOC&trade; 4100T Plus CAPSENSE&trade; Prototyping Kit](https://www.infineon.com/CY8CPROTO-041TP) (`CY8CPROTO-041TP`)
@@ -47,6 +47,8 @@ This application is tuned to perform optimally at the default voltage. However, 
 ## Software setup
 
 See the [ModusToolbox&trade; tools package installation guide](https://www.infineon.com/ModusToolboxInstallguide) for information about installing and configuring the tools package.
+
+This example requires no additional software or tools.
 
 
 ## Using the code example
@@ -89,7 +91,7 @@ The 'project-creator-cli' tool can be used to create applications from a CLI ter
 
 Use a CLI terminal to invoke the 'project-creator-cli' tool. On Windows, use the command-line 'modus-shell' program provided in the ModusToolbox&trade; installation instead of a standard Windows command-line application. This shell provides access to all ModusToolbox&trade; tools. You can access it by typing "modus-shell" in the search box in the Windows menu. In Linux and macOS, you can use any terminal application.
 
-The following example clones the "[PSOC&trade; 4: MSCLP CAPSENSE&trade; liquid level sensing](https://github.com/Infineon/mtb-example-psoc4-msclp-lls)" application with the desired name "MyLLS" configured for the *CY8CPROTO-040T-MS* BSP into the specified working directory, *C:/mtb_projects*:
+The following example clones the "[MSCLP CAPSENSE LLS](https://github.com/Infineon/mtb-example-psoc4-msclp-lls)" application with the desired name "MyLLS" configured for the *CY8CPROTO-040T-MS* BSP into the specified working directory, *C:/mtb_projects*:
 
    ```
    project-creator-cli --board-id CY8CPROTO-040T-MS --app-id mtb-example-psoc4-msclp-lls --user-app-name MyLLS --target-dir "C:/mtb_projects"
@@ -109,6 +111,7 @@ Argument | Description | Required/optional
 > **Note:** The project-creator-cli tool uses the `git clone` and `make getlibs` commands to fetch the repository and import the required libraries. For details, see the "Project creator tools" section of the [ModusToolbox&trade; tools package user guide](https://www.infineon.com/ModusToolboxUserGuide) (locally available at {ModusToolbox&trade; install directory}/docs_{version}/mtb_user_guide.pdf).
 
 </details>
+
 
 
 ### Open the project
@@ -163,7 +166,7 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
 ## Operation
 
-1. Ensure the board is connected with the Liquid Level Sensing Flex PCB
+1. Ensure the board is connected with the liquid level sensing flex PCB
 
    > **Note:** If a custom container is used other than the bottle provided with the kit, the system may need a liquid level factory calibration as mentioned in the [Perform liquid level calibration](#perform-liquid-level-calibration) section
 
@@ -184,7 +187,6 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
    <details><summary><b>In other IDEs</b></summary>
 
    Follow the instructions in your preferred IDE.
-
    </details>
 
 
@@ -203,53 +205,64 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
 4. After programming, the application starts automatically
 
-   > **Note:** After programming, you may see the following error message if debug mode is disabled, see **Table 6** in the [Debugging](#debugging) section for the default debug configuration in the supported kits. This can be ignored or enabling debug solves this error
+   > **Note:** After programming, you may see the following error message if debug mode is disabled, see **Table 7** of the [Debugging](#debugging) section for the default debug configuration in the supported kits. Ignore the error or enable debug mode to solve it
 
    ``` c
    "Error: Error connecting Dp: Cannot read IDR"
    ```
 
+5. To test the application, observe the LED behavior as shown in **Table 1**
+
+**Table 1. LED indications and status**
+
+   Scenario                         | CY8CPROTO-040T-MS | CY8CPROTO-041TP |  LED Status
+   :--------------                  | :-----            | :-----          | :-----
+   Tank detected                    | LED2              | LED2            | ON
+   Liquid Presence detected (60 mm) | LED2 & LED3       | LED2 & LED3     | ON
+<br>
+
 
 ### Monitor data using CAPSENSE&trade; Tuner
 
-1. Open CAPSENSE&trade; Tuner from the **IDE Quick Panel** of Eclipse for ModusToolbox&trade;
+1. Open CAPSENSE&trade; Tuner from the **IDE Quick Panel** of the Eclipse IDE for ModusToolbox&trade;
 
-   You can also run the CAPSENSE&trade; Tuner application in standalone mode from *{ModusToolbox&trade; install directory}/ModusToolbox/tools_{version}/capsense-configurator/capsense-tuner*. In this case, after opening the application, select **File** > **Open** and open the *design.cycapsense* file of the respective application, which is present in the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config* folder
+   Or
+   
+   Run the CAPSENSE&trade; Tuner application in standalone mode from *{ModusToolbox&trade; install directory}/ModusToolbox/tools_{version}/capsense-configurator/capsense-tuner*. In this case, after opening the application, select **File** > **Open** and open the *design.cycapsense* file of the respective application, which is present in the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config* folder
 
-   See the [ModusToolbox&trade; user guide](https://www.infineon.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox&trade; install directory}/docs_{version}/mtb_user_guide.pdf*) for options to open the CAPSENSE&trade; Tuner application using the CLI
+   See the [ModusToolbox&trade; user guide](https://www.infineon.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox&trade; install directory}/docs_{version}/mtb_user_guide.pdf*) for options to start CAPSENSE&trade; Tuner using the CLI
 
-2. Ensure that the status LED is on and not blinking, which indicates that the onboard KitProg3 is in CMSIS-DAP bulk mode. See [Firmware-loader](https://github.com/Infineon/Firmware-loader) to learn how to update the firmware and switch modes in KitProg3
+2. Ensure the status LED is on and not blinking, which indicates that the onboard KitProg3 is in CMSIS-DAP bulk mode. See [Firmware-loader](https://github.com/Infineon/Firmware-loader) to learn how to update the firmware and switch modes in KitProg3
 
-3. In the Tuner application, click on the **Tuner Communication Setup** icon or select **Tools** > **Tuner Communication setup**
+3. In the Tuner application, select **Tools** > **Tuner Communication setup**or click on the **Tuner Communication Setup** icon
 
-   In the window that appears, select I2C under KitProg3 and configure it as follows:
+   In the window that appears, select **I2C** under **KitProg3** and configure it as follows:
 
    - **I2C address:** 8
-   - **Sub-address:** 2-Bytes
+   - **Sub-address:** 2 Bytes
    - **Speed (kHz):** 400
 
    These are the same values set in the EZI2C resource
 
-   **Figure 1. Tuner Communication Setup parameters**
+   **Figure 1. Tuner communication setup parameters**
 
    <img src="images/tuner-comm-setup.png" width="600"/> 
 
-4. Click **Connect** or select **Communication** > **Connect** to establish a connection
+4. Select **Communication** > **Connect** or click the **Connect** icon to establish a connection
 
-   **Figure 2. Establish a connection**
+   **Figure 2. Establish connection**
 
    <img src="images/tuner-connect.png" width="500"/>
 
-
-5. Click **Start** or select **Communication** > **Start** to start data streaming from the device
+5. Select **Communication** > **Start** or Click the **Start** icon to start streaming data from the device
 
    **Figure 3. Start tuner communication**
 
    <img src="images/tuner-start.png" width="500"/>
 
-   The **Widget/Sensor Parameters** tab is updated with the parameters configured in the CAPSENSE&trade; Configurator window. The tuner displays the data from the sensor in **Widget View** and **Graph View** tabs
+   The **Widget/Sensor Parameters** tab is updated with the parameters configured in the **CAPSENSE&trade; Configurator** window. The tuner displays the data from the sensor in the **Widget View** and **Graph View** tabs
 
-6. Set the **Read mode** to **Synchronized**. Navigate to the **Widget View** tab and observe the needle in the **Liquid_Level_Sensor_FR** widget is changing as you pour or remove water in the container
+6. Set the **Read mode** as **Synchronized**. Navigate to the **Widget View** tab and observe the needle in the **Liquid_Level_Sensor_FR** widget changing as you pour or remove water in the container
 
    **Figure 4. Widget view of the CAPSENSE&trade; Tuner**
 
@@ -257,15 +270,15 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
 7. Add a layer of foam on top of the liquid, facilitated by a surfactant, and observe how the liquid level remains unaffected by the foam, as reported by the **Liquid_Level_Sensor_FR** widget. This demonstrates the system's ability to reject foam and maintain accurate liquid level sensing
 
-   **Figure 5. Widget view of the CAPSENSE&trade; Tuner**
+   **Figure 5. Widget view of CAPSENSE&trade; Tuner**
 
    <img src="images/tuner-lls-FR-view.png" width="750"/>
 
-   > **Note:** The Level in the **Liquid_Level_Sensor** changes due to the foam as it is a normal liquid level sensor and does not incorporate the foam rejection capability
+   > **Note:** The level in the **Liquid_Level_Sensor** changes due to the foam as it is a normal liquid level sensor and does not incorporate the foam rejection capability
 
-8. View the raw counts of the liquid level sensors through the **Graph View tab**. The normal liquid level and foam-rejected liquid level can be observed in the position window
+8. View the raw counts of the liquid level sensors through the **Graph View** tab. The normal liquid level and foam-rejected liquid level can be observed in the position window
 
-   **Figure 6. Liquid Level Sensor position**
+   **Figure 6. Liquid level sensor position**
 
    <img src="images/liquid-level-position.png" width="800"/>
 
@@ -273,7 +286,7 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
    1. Select the **Liquid_Level_0_Sns0** sensor under the **Liquid_Level_0** widget and click **Acquire Noise**, as shown in **Figure 7**. Repeat the same (**Acquire Noise**) for all sensors under the **Liquid_Level_0** widget
       
-      **Figure 7. CAPSENSE&trade; Tuner - SNR measurement: Acquire Noise**
+      **Figure 7. CAPSENSE&trade; Tuner - SNR measurement: Acquire noise**
 
       <img src="images/tuner-acquire-noise.png" width="800"/>
 
@@ -283,16 +296,16 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
       <img src="images/tuner-acquire-signal.png" width="800"/>
  
-      Ensure that the SNR is above **20:1**
+      Ensure the SNR is above **20:1**
 
 
 ## Tuning procedure
 
-<details><summary><b>Create a custom BSP for your board</b></summary>
+<details><summary><b> Create a custom BSP for your board </b></summary>
 
-1. Create a custom BSP for your board with any device by following the steps given in [ModusToolbox&trade; BSP Assistant user guide](https://www.infineon.com/ModusToolboxBSPAssistant). This code example is created for the CY8C4046LQI-T452 device
+1. Create a custom BSP for your board for any device by following the steps given in [ModusToolbox&trade; BSP Assistant user guide](https://www.infineon.com/ModusToolboxBSPAssistant). This code example is created for the CY8C4046LQI-T452 device
 
-2. Open the *design.modus* file from the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config/* folder obtained in the previous step and enable CAPSENSE&trade; to get the *design.cycapsense* file. CAPSENSE&trade; configuration can be started from scratch as follows:
+2. Open the *design.modus* file from the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config/* folder obtained in the previous step and enable CAPSENSE&trade; to get the *design.cycapsense* file. CAPSENSE&trade; configuration can then be started from scratch, as explained below
 
 </details>
 
@@ -300,7 +313,7 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
 > **Note:** See the "Selecting CAPSENSE&trade; hardware parameters" section in [AN85951 – PSOC&trade; 4 and PSOC&trade; 6 MCU CAPSENSE&trade; design guide](https://www.infineon.com/AN85951) to learn the considerations for selecting each parameter value.
 
-The tuning flow of the **Liquid Level Sensing** widget is shown in **Figure 9**.
+The tuning flow of the **Liquid level sensing** widget is shown in **Figure 9**.
 
 **Figure 9. Tuning flow of liquid level sensor**
 
@@ -308,13 +321,16 @@ The tuning flow of the **Liquid Level Sensing** widget is shown in **Figure 9**.
 
 <br>
 
-Perform the following to tune the **Liquid Level Sensing** widget:
+Perform the following steps to tune the **liquid level sensing** widget:
 
 - [Stage 1: Set the initial hardware parameters](#stage-1-set-the-initial-hardware-parameters)
 
 - [Stage 2: Set the sense clock frequency](#stage-2-set-sense-clock-frequency)
 
 - [Stage 3: Fine tune for the required SNR](#stage-3-fine-tune-for-required-snr)
+
+- [Stage 4: Perform liquid level calibration ](#stage-4-perform-liquid-level-calibration)
+
 
 
 ### Stage 1: Set the initial hardware parameters
@@ -323,9 +339,13 @@ Perform the following to tune the **Liquid Level Sensing** widget:
 
 2. Launch the Device Configurator tool
 
-   You can launch the Device Configurator in Eclipse IDE for ModusToolbox&trade; from the **Quick Panel** or in standalone mode from *{ModusToolbox&trade; install directory}/ModusToolbox/tools_{version}/device-configurator/device-configurator*. In this case, after opening the application, select **File** > **Open** and open the *design.modus* file of the respective application located in the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config* folder
+   Launch it in the Eclipse IDE for ModusToolbox&trade; from the **Quick Panel**
 
-3. Enable the CAPSENSE&trade; channel in the Device Configurator tool as shown in **Figure 10**:
+   Or
+
+   Launch it in standalone mode from *{ModusToolbox&trade; install directory}/ModusToolbox/tools_{version}/device-configurator/device-configurator*. In this case, after opening the application, select **File** > **Open** and open the *design.modus* file of the respective application located in the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config* folder
+
+3. Enable the CAPSENSE&trade; channel in the Device Configurator tool, as shown in **Figure 10**:
 
    **Figure 10. Enable CAPSENSE&trade; in Device Configurator**
 
@@ -335,9 +355,11 @@ Perform the following to tune the **Liquid Level Sensing** widget:
 
 4. Launch the CAPSENSE&trade; Configurator tool
 
-   You can launch the CAPSENSE&trade; Configurator tool in Eclipse IDE for ModusToolbox&trade; from the "CAPSENSE&trade;" peripheral setting in the Device Configurator or directly from the **IDE Quick Panel**
+   Launch it in Eclipse IDE for ModusToolbox&trade; through the "CAPSENSE&trade;" peripheral setting in the Device Configurator or directly from the **IDE Quick Panel**
 
-   You can also launch it in standalone mode through *{ModusToolbox&trade; install directory}/ModusToolbox/tools_{version}/capsense-configurator/capsense-configurator*. In this case, after opening the application, select **File** > **Open** and open the *design.cycapsense* file of the respective application present in the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config* folder
+   Or
+
+   Launch it in standalone mode through *{ModusToolbox&trade; install directory}/ModusToolbox/tools_{version}/capsense-configurator/capsense-configurator*. In this case, after opening the application, select **File** > **Open** and open the *design.cycapsense* file of the respective application present in the *{Application root directory}/bsps/TARGET_APP_\<BSP-NAME>/config* folder
 
    See the [ModusToolbox&trade; CAPSENSE&trade; Configurator user guide](https://www.infineon.com/ModusToolboxCapSenseConfig) for step-by-step instructions on how to configure and launch CAPSENSE&trade; in ModusToolbox&trade;
 
@@ -348,9 +370,9 @@ Perform the following to tune the **Liquid Level Sensing** widget:
    <img src="images/capsense-configurator-basic.png"/>
 
 
-6. Do the following in the **General** tab under the **Advanced** tab:
+6. Set the following in the **Advanced** > **General** tab:
 
-   **Table 1. Widget details**
+   **Table 2. Widget details**
 
    Parameter | Setting | Description
    :-------- |:----------- |:-----------
@@ -367,14 +389,14 @@ Perform the following to tune the **Liquid Level Sensing** widget:
 
 7. Go to the **CSD Settings** tab and make the following changes:
 
-   **Table 2. Scan settings**
+   **Table 3. Scan settings**
 
    Parameter | CY8CPROTO-040T-MS | Description
-   :-------- |:----------- |:-----------
-   Inactive sensor connection | Shield | Connects the inactive sensors (configured sensors which have not been scanned in a given scan-slot) to the driven shield
+   :-------- | :----------- | :-----------
+   Inactive sensor connection | Shield | Connects the inactive sensors (configured sensors that have not been scanned in a given scan slot) to the driven shield
    Shield mode | Active | The driven shield is a signal that replicates the sensor-switching signal. It helps reduce the sensor parasitic capacitance
    Total shield count | 2 |  Selects the number of shield electrodes used in the design. Most designs work with one dedicated shield electrode, but some designs require multiple dedicated shield electrodes to ease the PCB layout routing or minimize the PCB area used for the shield layer
-   Raw count calibration level (%) | 40 | If the sensor raw count saturates (equals maximum raw count) on water covering the sensor, reduce the raw count calibration level (%). This will prevent raw count saturation
+   Raw count calibration level (%) | 40 | If the sensor raw count saturates (equals maximum raw count) on water covering the sensor, reduce the raw count calibration level (%). This prevents raw count saturation
 
    <br>
    
@@ -386,69 +408,70 @@ Perform the following to tune the **Liquid Level Sensing** widget:
 
    Select the **LiquidLevel0** from the left pane and set the following:
 
-   **Table 3. Initial widget parameter setting LiquidLevel0**
+   **Table 4. Initial widget parameter setting LiquidLevel0**
 
    Parameter | Setting | Description
    :-------- |:----------- |:-----------
    Enable foam rejection | true | This is to enable the Foam Rejection Widget for the Foam Rejection functionality
-   Maximum level | 120 | Set this value to a multiple of the total depth of the tank. For example, this project uses a 12 cm tank. Therefore, the value may be 120, 240, or 1200; however, this project has used 120, for every 1 count 1 mm will be measured
-   Sense clock divider | Default | Value will be set in [Stage 2: Set sense clock frequency](#stage-2-set-sense-clock-frequency)
+   Enable tank removal detection | true | This is to identify if the physical tank connected to the device has been removed or is not present
+   Maximum level | 120 | Set this value to a multiple of the total depth of the tank. For example, this project uses a 12 cm tank. Therefore, the value may be 120, 240, or 1200; however, this project has used 120, for every 1 count, 1 mm is measured
+   Sense clock divider | Default | Value is set in [Stage 2: Set sense clock frequency](#stage-2-set-sense-clock-frequency)
    Clock source | Direct | Direct clock is a constant frequency sense clock source. When you choose this option, the sensor pin switches with a constant frequency
    Number of sub-conversions | 60 | Good starting point to ensure a fast scan time and sufficient signal. This value has to be adjusted as required in [Stage 3: Fine-tune for required SNR](#stage-3-fine-tune-for-required-snr)
-   Reference CDAC mode  | Auto  | Setting it to Auto for initial Auto Calibration
+   Reference CDAC mode  | Auto  | Set it to Auto for initial auto-calibration
    Reference CDAC boost | Disable  | Not required
-   Fine CDAC mode | Auto | Setting it to Auto for initial Auto Calibration
-   Compensation CDAC mode | Auto | Setting it to Auto for initial Auto Calibration
-   Compensation CDAC divider mode | Auto | Setting it to Auto for initial Auto Calibration
+   Fine CDAC mode | Auto | Set it to Auto for initial auto-calibration
+   Compensation CDAC mode | Auto | Set it to Auto for initial auto-calibration
+   Compensation CDAC divider mode | Auto | Set it to Auto for initial auto-calibration
    CDAC dither mode | Disable | Not required
-   IIR filter | false | Not required
-   Median filter | true | Essential to remove sudden spikes in the level measurement due to calculation errors
-   Average filter | true | Removes periodic noises like noise from AC mains
-   Jitter filter | true | Removes toggling of the position data
+   IIR filter | False | Not required
+   Median filter | True | Essential to remove sudden spikes in the level measurement due to calculation errors
+   Average filter | True | Removes periodic noises like noise from AC mains
+   Jitter filter | True | Removes toggling of the position data
 
    <br>
 
-   **Figure 14. CAPSENSE&trade; Configurator - Liquid Level Sensor Widget Details**
+   **Figure 14. CAPSENSE&trade; Configurator - Liquid Level Sensor widget details**
 
    <img src="images/capsense-configurator-widget-details-llw.png"/>
 
 
    Select the **LiquidLevel0_FR** from the left pane and set the following:
 
-   **Table 4. Initial widget parameter setting LiquidLevel0_FR**
+   **Table 5. Initial widget parameter setting LiquidLevel0_FR**
 
    Parameter | Setting | Description
    :-------- |:----------- |:-----------
-   Foam correction coefficient | 64 | This is to compensate for the foam correction level. To accurately calculate this value, follow the steps mentioned in the "Foam rejection coefficient calculation" section of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805)
+   Foam correction coefficient | 64 | To compensate for the foam correction level. To accurately calculate this value, follow the steps mentioned in the "Foam rejection coefficient calculation" section of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805)
    Maximum level | Same as **LiquidLevel0** widget | –
    Sense clock divider | Same as **LiquidLevel0** widget | –
    Clock source | Same as **LiquidLevel0** widget | –
-   Number of sub-conversions | 2X of the **LiquidLevel0** | General guidance is to set the number of sub-conversions to twice the number of sub-conversions for the base widget
-   Reference CDAC mode  | Auto  | Setting it to Auto for initial Auto Calibration
+   Number of sub-conversions | 2X of **LiquidLevel0** | General guidance is to set the number of sub-conversions to twice the number of sub-conversions for the base widget
+   Reference CDAC mode  | Auto  | Set it to Auto for initial auto-calibration
    Reference CDAC boost | Disable  | Not required
-   Fine CDAC mode | Auto | Setting it to Auto for initial Auto Calibration
-   Compensation CDAC mode | Auto | Setting it to Auto for initial Auto Calibration
-   Compensation CDAC divider mode | Auto | Setting it to Auto for initial Auto Calibration
+   Fine CDAC mode | Auto | Set it to Auto for initial auto-calibration
+   Compensation CDAC mode | Auto | Set it to Auto for initial auto-calibration
+   Compensation CDAC divider mode | Auto | Set it to Auto for initial auto-calibration
    CDAC dither mode | Disable | Not required
-   IIR filter | false | Not required
-   Median filter | true | Essential to remove sudden spikes in the level measurement due to calculation errors
-   Average filter | true | Removes periodic noise like noise from AC mains
-   Jitter filter | true | Removes toggling of the position data
+   IIR filter | False | Not required
+   Median filter | True | Essential to remove sudden spikes in the level measurement due to calculation errors
+   Average filter | True | Removes periodic noise like noise from AC mains
+   Jitter filter | True | Removes toggling of the position data
 
    <br>
 
-   **Figure 15. CAPSENSE&trade; Configurator - Liquid Level Foam Rejection Widget Details**
+   **Figure 15. CAPSENSE&trade; Configurator - Liquid Level Foam Rejection widget details**
 
    <img src="images/capsense-configurator-widget-details-llw-FR.png"/>
 
 
 9. Go to the **Scan Configuration** tab to select the pins and scan slots. Configure the pins for electrodes using the drop down menu
 
-   Ensure that the bottom most sensor is considered as Sensor 0 (Sns0) and the top most sensor is considered as Sensor N (SnsN)
+   Ensure that the bottom-most sensor is considered as Sensor 0 (Sns0) and the top-most sensor is considered as Sensor N (SnsN)
 
-10. The electrodes for the Liquid Level Foam Rejection widget **LiquidLevel0_FR** are same as that of the Liquid Level Widget **LiquidLevel0**. So the sensor electrodes of **LiquidLevel0** are simply ganged to LiquidLevel0_FR widget's sensor electrodes
+10. The electrodes for the liquid level foam rejection widget **LiquidLevel0_FR** are the same as that of the liquid level widget **LiquidLevel0**, so the sensor electrodes of **LiquidLevel0** are simply ganged to **LiquidLevel0_FR** widget's sensor electrodes
 
-    **Figure 16. CAPSENSE&trade; Configurator -  Scan Configuration tab**
+    **Figure 16. CAPSENSE&trade; Configurator – Scan Configuration tab**
 
     <img src="images/capsense-configurator-scan-configuration.png">
 
@@ -457,7 +480,7 @@ Perform the following to tune the **Liquid Level Sensing** widget:
 
 The sense clock is derived from the modulator clock using a sense clock divider and is used to scan the sensor by driving the CAPSENSE&trade; switched capacitor circuits. Both the clock source and clock divider are configurable. The sense clock divider should be configured so that the pulse width of the sense clock is long enough to let the sensor capacitance charge and discharge completely. This is verified by observing the charging and discharging waveforms of the sensor using an oscilloscope and an active probe. The sensors should be probed close to the electrode and not at the sense pins or the series resistor. 
 
-See **Figure 17** and **Figure 18** for waveforms observed on the sensors. **Figure 17** shows proper charging when the sense clock frequency is correctly tuned. Adjust the sense clock divider so that the voltage is reaching at least 99.3 percent of VDDD in Phase 1, or VDDD/2 in Phase 0, as **Figure 18** shows. 
+See **Figure 17** and **Figure 18** for waveforms observed on the sensors. **Figure 17** shows the proper charging when the sense clock frequency is correctly tuned. Adjust the sense clock divider so the voltage reaches at least 99.3% of VDDD in Phase 1, or VDDD/2 in Phase 0, as **Figure 18** shows. 
 
 
 **Figure 17. Proper charge cycle of a sensor**
@@ -470,18 +493,18 @@ See **Figure 17** and **Figure 18** for waveforms observed on the sensors. **Fig
 
 <img src="images/csdrm-waveform_improper.png" width="500"/>
    
-To set the proper sense clock frequency, follow these steps:
+   To set the proper sense clock frequency:
 
-1. Program the board and launch CAPSENSE&trade; Tuner
+   1. Program the board and launch CAPSENSE&trade; Tuner
 
-2. Observe the charging waveform of the sensor and shield as described earlier
+   2. Observe the charging waveform of the sensor and shield as described earlier 
 
 3. If the charging is incomplete, increase the sense clock divider. Do this in CAPSENSE&trade; Tuner by selecting the widget and editing the sense clock divider parameter in the **Widget/Sensor Parameters** panel
 
-   > **Note:** 
-   - The sense clock divider should be **divisible by 4**. This ensures that all four scan phases have equal durations
-   - After editing the value, click the **Apply to Device** button and observe the waveform again. Repeat this until you observe complete settling
-   - Using a passive probe will add an additional parasitic capacitance of around 15 pF; therefore, it should be considered while tuning
+      > **Note:** 
+       > - The sense clock divider should be **divisible by 4**. This ensures that all four scan phases have equal durations
+       > - After editing the value, click the **Apply to Device** button and observe the waveform again. Repeat this until you observe complete settling
+       > - Using a passive probe will add an additional parasitic capacitance of around 15 pF; therefore, it should be considered while tuning
       
 4. Click **Apply to Project** to save the configuration to your project
 
@@ -491,11 +514,11 @@ To set the proper sense clock frequency, follow these steps:
       
 5. Repeat this process for all the sensors and the shield. Each sensor may require a different sense clock divider value to charge or discharge completely. But all the sensors under the same widget need to have the same sense clock source, sense clock divider, and number of sub-conversions. Therefore, consider the largest sense clock divider required by the sensor for that widget
 
-   > **Note:** Typically, shields require a high sense clock divider. Because this project utilizes a shield, obtain the required sense clock divider for the shield. If it is higher than the Liquid Level Sensor widget, set the same sense clock divider for the Liquid Level Sensor Widget as well
+   > **Note:** Typically, shields require a high sense clock divider. Because this project utilizes a shield, obtain the required sense clock divider for the shield. If it is higher than the liquid level sensor widget, set the same sense clock divider for the liquid level sensor widget as well
    
-   **Table 5. Sense clock divider settings obtained for supported kits**
+   **Table 6. Sense clock divider settings obtained for supported kits**
 
-   Parameter |CY8CPROTO-040T-MS |CY8CPROTO-041TP
+   Parameter | CY8CPROTO-040T-MS | CY8CPROTO-041TP
    :-------- |:----------- |:-----------
    Sense clock divider | 128 | 128
    
@@ -512,7 +535,7 @@ Follow these steps for optimizing these parameters:
 
 2. If the SNR is less than 20:1, increase the number of sub-conversions. Edit the number of sub-conversions (N<sub>sub</sub>) directly in the **Widget/Sensor parameters** tab of the CAPSENSE&trade; Tuner and click on **Apply to Device**
 
-   > **Note:** Number of sub-conversion should be greater than or equal to 8.
+   > **Note:** Number of sub-conversion should be >= 8
   
 3. Repeat steps 1 and 2 until the Measured SNR is greater than **20:1**
 
@@ -535,13 +558,31 @@ Follow these steps for optimizing these parameters:
    > **Note:** Increasing the number of sub-conversions and enabling filters increases the scan time, which in turn reduces sensor responsiveness and increases power consumption. Therefore, the number of sub-conversions and filter configuration must be optimized to achieve a balance between SNR, power, and refresh rate
 
 
-## Perform liquid level calibration
+### Stage 4: Perform liquid level calibration
 
 After completing the sensor tuning procedure for the expected SNR as mentioned in [Stage 3: Fine-tune for required SNR](#stage-3-fine-tune-for-required-snr), perform the liquid level calibration to train the system for level measurement.
 
-For a detailed procedure on the liquid level calibration, refer to  section **Liquid-level calibration procedure** of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805).
+This code example is pre-calibrated to be used with the standard liquid level sensing kit, offering a calibration range of 120 mm and a resolution of 1 mm. 
 
-This code example is pre-calibrated for use with the standard Liquid Level Sensing Kit, offering a calibrated range of 120 mm and a resolution of 1 mm.
+For a detailed procedure on the liquid level calibration, see the **Liquid-level calibration procedure** section of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805).
+
+
+## Tank removal detection
+
+This feature detects if a physical tank is connected to the device or removed – it is enabled in this code example.
+
+For more details on this feature, see the **Tank Removal Detection** section of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805).
+
+
+## Liquid presence detection 
+
+The liquid presence detection feature reports the presence of a liquid, based on a pre-configured threshold. This feature can be enabled using either the **Liquid Level widget** or the **Liquid Presence widget**;**Figure 21** shows the Liquid Presence widget view in CAPSENSE&trade; Tuner.
+
+**Figure 21. Liquid presence widget view of the CAPSENSE&trade; Tuner**
+
+<img src="images/tuner-llp-view.png" width="800"/>
+
+For more details on this feature, including compatible widgets and threshold configuration guidelines  see the **Liquid Presence detection** section of the [Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805).
 
 
 ## One-time factory auto-calibration
@@ -554,7 +595,8 @@ This code example has this one-time factory auto-calibration feature enabled at 
 
 > **Note:**  It is essential to completely empty the tank attached.
 
-For details on one-time auto-calibration, refer to section **One-time factory auto-calibration** of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805).
+For details on one-time auto-calibration, see the **One-time factory auto-calibration** section of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805).
+
 
 
 ## Debugging
@@ -565,7 +607,6 @@ You can debug the example to step through the code.
 <details><summary><b>In Eclipse IDE</b></summary>
 
 Use the **\<Application Name> Debug (KitProg3_MiniProg4)** configuration in the **Quick Panel**. For details, see the "Program and debug" section in the [Eclipse IDE for ModusToolbox&trade; user guide](https://www.infineon.com/MTBEclipseIDEUserGuide).
-
 
 </details>
 
@@ -578,9 +619,9 @@ Follow the instructions in your preferred IDE.
 
 To enable the debug option, see the [Setup VDDA and debug mode in Device Configurator](#set-up-the-vdda-supply-voltage-and-debug-mode-in-device-configurator) section. To achieve lower power consumption, it is recommended to disable it when not debugging.
 
-See **Table 6** for the default debug configuration in the supported kits.
+See **Table 7** for the default debug configuration in the supported kits.
 
-**Table 6. Debug mode option status**
+**Table 7. Debug mode option status**
 
 Kit  | Debug mode 
 :----| :----------
@@ -588,7 +629,7 @@ CY8CPROTO-040T-MS | Enabled
 CY8CPROTO-041TP | Enabled
 
 <br>
-
+   
 
 ## Design and implementation
 
@@ -598,38 +639,38 @@ See [AN85951 – PSOC&trade; 4 and PSOC&trade; 6 MCU CAPSENSE&trade; design guid
 
 See [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805) for complete details on how to create a liquid level sensing system using CAPSENSE&trade;. It also discusses how to design the liquid level sensors.
 
-This code example uses a **Liquid Level Sensing** widget along with its **Liquid Level Sensing Foam Rejection** sub-widget to accurately measure the liquid level in the bottle as provided with the Liquid Level Sensing Kit. The **Liquid Level Sensing Foam Rejection** sub-widget provides accurate liquid level measurements while rejecting foam interference.
+This code example uses a **liquid level sensing** widget along with its **liquid level sensing foam rejection** sub-widget to accurately measure the liquid level in the bottle as provided with the Liquid Level Sensing Kit. The **Liquid level sensing foam rejection** sub-widget provides accurate liquid level measurements while rejecting foam interference.
 
-**Figure 21. Liquid Level Sensor widget**
+**Figure 22. Liquid level sensor widget**
 
 <img src="images/llw-widget.png" width="300"/>
 
 <br>
 
-**Figure 22. Liquid Level Sensor Foam Rejection sub-widget**
+**Figure 23. Liquid level sensor foam rejection sub-widget**
 
 <img src="images/llw-FR-widget.png" width="300"/>
 
 The design also has an EZI2C peripheral. The EZI2C slave peripheral is used to monitor the information of a sensor's raw and processed data on a PC using the CAPSENSE&trade; Tuner available in the Eclipse IDE for ModusToolbox&trade; via I2C communication.
 
-The firmware scans the **Liquid Level Sensing** widget and the **Liquid Level Sensing Foam Rejection** sub-widget indefinitely. The scan results are then processed and sent to the CAPSENSE&trade; Tuner via the EZI2C bus. The level then can be seen under the **Position** window of the CAPSENSE&trade; Tuner.
+The firmware scans the **liquid level sensing** widget and the **liquid level sensing foam rejection** sub-widget indefinitely. The scan results are then processed and sent to the CAPSENSE&trade; Tuner via the EZI2C bus. The level then can be seen under the **Position** window of the CAPSENSE&trade; Tuner.
 
-> **Note:** In the current project, the **Liquid Level Sensing** widget and the **Liquid Level Sensing Foam Rejection** sub-widget are scanned separately and needs to be scanned separately; they will not work if scanned together by calling `Cy_CapSense_ScanAllWidgets` due to architectural limitations. This will get resolved in upcoming releases.
+> **Note:** In the current project, the **liquid level sensing** widget and the **liquid level sensing foam rejection** sub-widget are scanned separately and needs to be scanned separately; they will not work if scanned together by calling `Cy_CapSense_ScanAllWidgets` due to architectural limitations. This will get resolved in upcoming releases.
 
 
 ### Set up the VDDA supply voltage and debug mode in Device Configurator
 
 1. Open Device Configurator tool from the **Quick Panel** of the Eclipse for ModusToolbox&trade;
 
-2. Go to the **System** tab. Select the **Power** resource and set the VDDA value under **Operating conditions** as shown in **Figure 23**
+2. Go to the **System** tab. Select the **Power** resource and set the VDDA value under **Operating conditions** as shown in **Figure 24**
 
-   **Figure 23. Setting the VDDA supply in the System tab of Device Configurator**
+   **Figure 24. Setting the VDDA supply in the System tab of Device Configurator**
 
    <img src="images/vdda-setting.png" width="800"/>
 
-3. By default, the debug mode is disabled for this application to reduce power consumption. Enable the debug mode to enable the SWD pins, as shown in **Figure 24**:
+3. By default, the debug mode is disabled for this application to reduce power consumption. Enable the debug mode to enable the SWD pins, as shown in **Figure 25**:
 
-   **Figure 24. Enable Debug mode in the System tab of Device Configurator**
+   **Figure 25. Enable Debug mode in the System tab of Device Configurator**
 
    <img src="images/debug.png" width="800"/>
 
@@ -637,13 +678,13 @@ The firmware scans the **Liquid Level Sensing** widget and the **Liquid Level Se
 ### Resources and settings
 
 
-   **Figure 25. EZI2C settings**
+   **Figure 26. EZI2C settings**
 
    <img src="images/EZI2C_Settings.png" width="800"/>
    
    <br>
 
-**Table 7. Application resources**
+**Table 8. Application resources**
 
 Resource  |  Alias/object     |    Purpose
 :-------- | :-------------    | :------------
@@ -655,7 +696,7 @@ CAPSENSE&trade; (MSCLP0) | CYBSP_MSCLP0 | CAPSENSE&trade; driver to interact wit
 
 ### Firmware flow
 
-**Figure 26. Firmware flowchart**
+**Figure 27. Firmware flowchart**
 
 <img src="images/firmware-flowchart.png" width="450"/>
 
@@ -664,13 +705,13 @@ CAPSENSE&trade; (MSCLP0) | CYBSP_MSCLP0 | CAPSENSE&trade; driver to interact wit
 
 Resources  | Links
 -----------|----------------------------------
-Application notes  | [AN79953](https://www.infineon.com/AN79953) – Getting started with PSOC&trade; 4 <br> [AN85951](https://www.infineon.com/AN85951) – PSOC&trade; 4 and PSOC&trade; 6 MCU CAPSENSE&trade; design guide <br> [AN239805](https://www.infineon.com/AN239805) – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade; <br>[AN234231](https://www.infineon.com/AN234231) – PSOC&trade; 4 CAPSENSE&trade; ultra-low-power capacitive sensing techniques <br> [AN92239](https://www.infineon.com/an92239) – Proximity sensing with CAPSENSE&trade;
+Application notes  | [AN79953](https://www.infineon.com/AN79953) – Getting started with PSOC&trade; 4 <br> [AN85951](https://www.infineon.com/AN85951) – PSOC&trade; 4 and PSOC&trade; 6 MCU CAPSENSE&trade; design guide <br> [AN239805](https://www.infineon.com/AN239805) – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade; <br> [AN234231](https://www.infineon.com/AN234231) – PSOC&trade; 4 CAPSENSE&trade; ultra-low-power capacitive sensing techniques <br> [AN92239](https://www.infineon.com/an92239) – Proximity sensing with CAPSENSE&trade;
 Code examples  | [Using ModusToolbox&trade;](https://github.com/Infineon/Code-Examples-for-ModusToolbox-Software) on GitHub
-Device documentation | [PSOC&trade; 4 datasheets](https://documentation.infineon.com/psoc4/docs/qqs1702048028479) <br>[PSOC&trade; 4 technical reference manuals](https://documentation.infineon.com/psoc4/docs/hup1702048028817)
-Development kits | Select your kits from the [Evaluation board finder](https://www.infineon.com/cms/en/design-support/finder-selection-tools/product-finder/evaluation-board)
+Device documentation | [PSOC&trade; 4 datasheets](https://documentation.infineon.com/psoc4/docs/qqs1702048028479) <br> [PSOC&trade; 4 technical reference manuals](https://documentation.infineon.com/psoc4/docs/hup1702048028817)
+Development kits | Select your kits from the [Evaluation board finder](https://www.infineon.com/cms/en/design-support/finder-selection-tools/product-finder/evaluation-board).
 Libraries on GitHub  | [mtb-pdl-cat2](https://github.com/Infineon/mtb-pdl-cat2) – PSOC&trade; 4 Peripheral Driver Library (PDL)
 Middleware on GitHub  | [capsense](https://github.com/Infineon/capsense) – CAPSENSE&trade; library and documents <br> [psoc4-middleware](https://github.com/Infineon/modustoolbox-software#libraries) – Links to all PSOC&trade; 4 middleware
-Tools  | [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) – ModusToolbox&trade; software is a collection of easy-to-use libraries and tools enabling rapid development with Infineon MCUs for applications ranging from wireless and cloud-connected systems, edge AI/ML, embedded sense and control, to wired USB connectivity using PSOC&trade; Industrial/IoT MCUs, AIROC&trade; Wi-Fi and Bluetooth&reg; connectivity devices, XMC&trade; Industrial MCUs, and EZ-USB&trade;/EZ-PD&trade; wired connectivity controllers. ModusToolbox&trade; incorporates a comprehensive set of BSPs, HAL, libraries, configuration tools, and provides support for industry-standard IDEs to fast-track your embedded application development
+Tools  | [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) – ModusToolbox&trade; software is a collection of easy-to-use libraries and tools enabling rapid development with Infineon MCUs for applications ranging from wireless and cloud-connected systems, edge AI/ML, embedded sense and control, to wired USB connectivity using PSOC&trade; Industrial/IoT MCUs, AIROC&trade; Wi-Fi and Bluetooth&reg; connectivity devices, XMC&trade; Industrial MCUs, and EZ-USB&trade;/EZ-PD&trade; wired connectivity controllers. ModusToolbox&trade; incorporates a comprehensive set of BSPs, HAL, libraries, configuration tools, and provides support for industry-standard IDEs to fast-track your embedded application development.
 
 <br>
 
@@ -678,7 +719,6 @@ Tools  | [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) – ModusT
 ## Other resources
 
 Infineon provides a wealth of data at [www.infineon.com](https://www.infineon.com) to help you select the right device, and quickly and effectively integrate it into your design.
-
 
 
 ## Document history
@@ -692,6 +732,7 @@ Version | Description of change
 2.1.0   | Removed foam rejection calibration process
 3.0.0   | Added support for CY8CPROTO-041TP Prototyping Kit. Major update to support ModusToolbox&trade; v3.5. This version is not backward compatible with previous versions of ModusToolbox&trade;
 4.0.0   | Added one-time auto-calibration feature <br> Major update to support ModusToolbox&trade; v3.6. This version is not backward compatible with previous versions of ModusToolbox&trade;
+5.0.0   | Added tank removal detection and liquid level presence feature <br> Major update to support ModusToolbox&trade; v3.7. This version is not backward compatible with previous versions of ModusToolbox&trade;
 <br>
 
 

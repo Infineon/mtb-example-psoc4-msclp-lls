@@ -1,8 +1,7 @@
 /******************************************************************************
  * File Name: main.c
  *
- * Description: This is the source code for the PSoC 4 MSCLP self-capacitance
- * button tuning with Gesture detection code example for ModusToolbox.
+ * Description: This is the source code for the PSoC 4 MSCLP CAPSENSE™ liquid level sensing code example for ModusToolbox.
  *
  * Related Document: See README.md
  *
@@ -50,6 +49,9 @@
 /*******************************************************************************
  * User configurable Macros
  ********************************************************************************/
+#define STATE_VALID                     (1u)
+#define CYBSP_LED_OFF                   (0u)
+#define CYBSP_LED_ON                    (1u)
 
 /*******************************************************************************
  * One time factory CDAC calibration Macros
@@ -77,7 +79,10 @@
 
 #define EEPROM_STATE_OFFSET         (0u)
 #define EEPROM_DATA_OFFSET          (1u)
-#define STATE_VALID                 (1u)
+
+
+
+
 
 /*******************************************************************************
  * EMULATED EEPROM configuration parameters
@@ -145,10 +150,10 @@ cy_stc_scb_ezi2c_context_t ezi2c_context;
 cy_stc_eeprom_context_t em_eeprom_context;
 
 static cy_stc_eeprom_config_t em_eeprom_config = { .eepromSize = EM_EEPROM_SIZE, /* 256 bytes */
-.blockingWrite = BLOCKING_WRITE, /* Blocking writes enabled */
-.redundantCopy = REDUNDANT_COPY, /* Redundant copy enabled */
-.wearLevelingFactor = WEAR_LEVELLING_FACTOR, /* Wear levelling factor of 2 */
-.simpleMode = SIMPLE_MODE, /* Simple mode disabled */
+        .blockingWrite = BLOCKING_WRITE, /* Blocking writes enabled */
+        .redundantCopy = REDUNDANT_COPY, /* Redundant copy enabled */
+        .wearLevelingFactor = WEAR_LEVELLING_FACTOR, /* Wear levelling factor of 2 */
+        .simpleMode = SIMPLE_MODE, /* Simple mode disabled */
 };
 
 /* EEPROM storage Emulated EEPROM flash. */
@@ -167,6 +172,7 @@ static void initialize_capsense(void);
 static void capsense_msc0_isr(void);
 static void ezi2c_isr(void);
 static void initialize_capsense_tuner(void);
+void led_control();
 
 #if LLS_FACTORY_CALIBRATION_ENABLE
 static void initialize_em_eeprom(void);
@@ -192,12 +198,12 @@ static void liquid_level_OneTime_Calibration(void);
 
 int main(void)
 {
-    cy_rslt_t result;
+        cy_rslt_t result;
 
-    /* Initialize the device and board peripherals */
-    result = cybsp_init();
+        /* Initialize the device and board peripherals */
+        result = cybsp_init();
 
-    /* Board init failed. Stop program execution */
+        /* Board init failed. Stop program execution */
     if (result != CY_RSLT_SUCCESS)
     {
         CY_ASSERT(CY_ASSERT_FAILED);
@@ -220,7 +226,7 @@ int main(void)
     {
         uint32_t level_w_FR, level_wo_FR;
 
-        /* Scan the normal Liquid Level Widget */
+                /* Scan the normal Liquid Level Widget */
         Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_WDGT_ID,
                 &cy_capsense_context);
         /* Wait until the scan is finished */
@@ -242,6 +248,7 @@ int main(void)
         /* Send capsense data to the Tuner */
         Cy_CapSense_RunTuner(&cy_capsense_context);
 
+
         /* store the liquid level before and after foam rejection */
         level_wo_FR = CY_CAPSENSE_LIQUIDLEVEL0_PTRPOSITION_VALUE->x;
         level_w_FR = CY_CAPSENSE_LIQUIDLEVEL0_FR_PTRPOSITION_VALUE->x;
@@ -250,6 +257,7 @@ int main(void)
         (void) level_wo_FR;
         (void) level_w_FR;
 
+        led_control();
     }
 }
 
@@ -267,7 +275,7 @@ static void initialize_capsense(void)
 
     /* CAPSENSE interrupt configuration MSCLP 0 */
     const cy_stc_sysint_t capsense_msc0_interrupt_config = { .intrSrc =
-    CY_MSCLP0_LP_IRQ, .intrPriority = CAPSENSE_MSC0_INTR_PRIORITY, };
+            CY_MSCLP0_LP_IRQ, .intrPriority = CAPSENSE_MSC0_INTR_PRIORITY, };
 
     /* Capture the MSC HW block and initialize it to the default state. */
     status = Cy_CapSense_Init(&cy_capsense_context);
@@ -379,7 +387,7 @@ static void initialize_em_eeprom(void)
 
     /* Read the factory calibrated values from EEPROM*/
     Cy_Em_EEPROM_Read(LOGICAL_EM_EEPROM_START, eeprom_data,
-    LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
+            LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
 
     // Verify for the first power on condition
     if (ASCII_P != eeprom_data[POWERON_STATE_OFFSET])
@@ -389,7 +397,7 @@ static void initialize_em_eeprom(void)
         eeprom_data[POWERON_STATE_OFFSET] = 'P';
         /* Write the factory calibrated values to EEPROM*/
         Cy_Em_EEPROM_Write(LOGICAL_EM_EEPROM_START, eeprom_data,
-        POWERON_STATUS_SIZE, &em_eeprom_context);
+                POWERON_STATUS_SIZE, &em_eeprom_context);
     }
 
     /* Emulated EEPROM init failed. Stop program execution */
@@ -439,17 +447,17 @@ static void liquid_level_OneTime_Calibration(void)
 
     /* Read the factory calibrated values from EEPROM*/
     Cy_Em_EEPROM_Read(LOGICAL_EM_EEPROM_START, eeprom_data,
-    LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
+            LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
 
     for (wd_id = 0u; wd_id < CY_CAPSENSE_TOTAL_WIDGET_COUNT; wd_id++)
     {
         /* Apply one time calibration only to Liquid level widgets */
-        if ((uint8_t) CY_CAPSENSE_WD_LIQUID_LEVEL_E
-                == cy_capsense_context.ptrWdConfig[wd_id].wdType)
+        if ((uint8_t) cy_capsense_context.ptrWdConfig[wd_id].wdType == CY_CAPSENSE_WD_LIQUID_LEVEL_E ||
+                (uint8_t) cy_capsense_context.ptrWdConfig[wd_id].wdType == CY_CAPSENSE_WD_LIQUID_PRESENCE_E)
         {
             /* Get the EEPROM pointer location of the widget*/
             ptr_eeprom_data = &eeprom_data[get_eeprom_buffer_position(wd_id)
-                    + POWERON_STATUS_SIZE];
+                                           + POWERON_STATUS_SIZE];
 
             /* Verify the LLS CDAC calibration and level calibration completion*/
             if (Cy_CapSense_IsLlwCalibrationValid(wd_id, &cy_capsense_context))
@@ -458,7 +466,7 @@ static void liquid_level_OneTime_Calibration(void)
                 {
                     /* Set the status flag to ready state before writing into EEPROM.*/
                     Cy_CapSense_SetWidgetCalibrationState(wd_id,
-                    STATE_VALID, &cy_capsense_context);
+                            STATE_VALID, &cy_capsense_context);
 
                     /* Update CDAC parameters with the factory calibrated values read from EEPROM */
                     Cy_CapSense_WriteWidgetCdacParam(
@@ -484,11 +492,11 @@ static void liquid_level_OneTime_Calibration(void)
 
                     /* Update the local calibration status flag */
                     Cy_CapSense_SetWidgetCalibrationState(wd_id,
-                    STATE_VALID, &cy_capsense_context);
+                            STATE_VALID, &cy_capsense_context);
 
                     /* Write the factory calibrated values to EEPROM*/
                     Cy_Em_EEPROM_Write(LOGICAL_EM_EEPROM_START, eeprom_data,
-                    LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
+                            LOGICAL_EM_EEPROM_SIZE, &em_eeprom_context);
                 }
             }
         }
@@ -496,10 +504,34 @@ static void liquid_level_OneTime_Calibration(void)
         {
             /* Update the local calibration status flag to avoid auto calibration of LLS widget */
             Cy_CapSense_SetWidgetCalibrationState(wd_id,
-            STATE_VALID, &cy_capsense_context);
+                    STATE_VALID, &cy_capsense_context);
         }
     }
 }
 #endif
 
+/*******************************************************************************
+ * Function Name: led_control
+ ********************************************************************************
+ * Summary:
+ * Control LED2 and LED3 in the kit to show the Tank removal detection and Liquid presence/absence
+ *******************************************************************************/
+void led_control()
+{
+    uint32_t tank_status;
+
+#if (CY_CAPSENSE_LIQUID_LEVEL_TANK_REMOVAL_DETECTION_EN)
+    tank_status = Cy_CapSense_IsTankRemoved(cy_capsense_context.ptrWdContext);
+    if (tank_status==1)
+        Cy_GPIO_Write(CYBSP_USER_LED2_PORT, CYBSP_USER_LED2_NUM, CYBSP_LED_ON);
+    else
+        Cy_GPIO_Write(CYBSP_USER_LED2_PORT, CYBSP_USER_LED2_NUM, CYBSP_LED_OFF);
+#endif
+
+    if(cy_capsense_context.ptrWdConfig->ptrWdContext->status & CY_CAPSENSE_WD_ACTIVE_MASK )
+        Cy_GPIO_Write(CYBSP_USER_LED1_PORT, CYBSP_USER_LED1_NUM, CYBSP_LED_ON);
+    else
+        Cy_GPIO_Write(CYBSP_USER_LED1_PORT, CYBSP_USER_LED1_NUM, CYBSP_LED_OFF);
+
+}
 /* [] END OF FILE */
