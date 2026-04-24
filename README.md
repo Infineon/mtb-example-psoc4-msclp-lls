@@ -2,9 +2,11 @@
 
 This code example demonstrates an implementation of capacitive sensors to measure the depth of water-based liquids in nonconductive containers. Mounted on or near the container exterior, these sensors provide accurate, real-time monitoring of liquid fill levels, while also rejecting foam interference and eliminating the need for physical contact with the liquid.
 
+ > **Note:** When using the liquid level sensing flex PCB provided with the kit, this code example delivers efficient performance for liquid level detection. However, it provides less efficient and less accurate results for foam rejection due to the thin flex PCB used. For applications that require reliable foam rejection, it is highly recommended to use FR4 PCBs. If flex PCBs must be used, thicker flex PCBs are advised to reduce parasitic capacitance between the active sensors and the shield..
+
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-psoc4-msclp-lls)
 
-[Provide feedback on this code example.](https://yourvoice.infineon.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aS55YXNodmlAaW5maW5lb24uY29tIiwiRG9jIHZlcnNpb24iOiI1LjAuMCIsIkRvYyBMYW5ndWFnZSI6IkVuZ2xpc2giLCJEb2MgRGl2aXNpb24iOiJNQ0QiLCJEb2MgQlUiOiJJQ1ciLCJEb2MgRmFtaWx5IjoiUFNPQyJ9)
+[Provide feedback on this code example.](https://yourvoice.infineon.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aS55YXNodmlAaW5maW5lb24uY29tIiwiRG9jIHZlcnNpb24iOiI2LjAuMCIsIkRvYyBMYW5ndWFnZSI6IkVuZ2xpc2giLCJEb2MgRGl2aXNpb24iOiJNQ0QiLCJEb2MgQlUiOiJJQ1ciLCJEb2MgRmFtaWx5IjoiUFNPQyJ9)
 
 
 ## Requirements
@@ -733,6 +735,7 @@ Version | Description of change
 3.0.0   | Added support for CY8CPROTO-041TP Prototyping Kit. Major update to support ModusToolbox&trade; v3.5. This version is not backward compatible with previous versions of ModusToolbox&trade;
 4.0.0   | Added one-time auto-calibration feature <br> Major update to support ModusToolbox&trade; v3.6. This version is not backward compatible with previous versions of ModusToolbox&trade;
 5.0.0   | Added tank removal detection and liquid level presence feature <br> Major update to support ModusToolbox&trade; v3.7. This version is not backward compatible with previous versions of ModusToolbox&trade;
+6.0.0   | Middleware version updated
 <br>
 
 
