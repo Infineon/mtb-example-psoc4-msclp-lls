@@ -46,6 +46,7 @@
 #include "cycfg.h"
 #include "cycfg_capsense.h"
 #include "cy_em_eeprom.h"
+#include <stdint.h>
 /*******************************************************************************
  * User configurable Macros
  ********************************************************************************/
@@ -79,10 +80,28 @@
 
 #define EEPROM_STATE_OFFSET         (0u)
 #define EEPROM_DATA_OFFSET          (1u)
+/*Enable PWM controlled LEDs*/
+#define ENABLE_PWM_LED                  (1u) 
 
+#if ENABLE_PWM_LED
+#define PWM_FREQ                        (7812u)
 
+/* --- Liquid Level Blink Rates (Adjust these HZ values as needed) --- */
+/* Level 1: Slowest  */
+#define LEVEL_1_BLINK_RATE_IN_HZ    (1u)
+/* Level 2: Medium  */
+#define LEVEL_2_BLINK_RATE_IN_HZ    (2u)
+/* Level 3: Fastest  */
+#define LEVEL_3_BLINK_RATE_IN_HZ    (10u)
 
+#define LEVEL_1_BLINK_PERIOD        ((uint32_t)(PWM_FREQ / LEVEL_1_BLINK_RATE_IN_HZ))
+#define LEVEL_2_BLINK_PERIOD        ((uint32_t)(PWM_FREQ / LEVEL_2_BLINK_RATE_IN_HZ))
+#define LEVEL_3_BLINK_PERIOD        ((uint32_t)(PWM_FREQ / LEVEL_3_BLINK_RATE_IN_HZ))
+#define LEVEL_1_DUTY_CYCLE          ((LEVEL_1_BLINK_PERIOD) >> 1u)
+#define LEVEL_2_DUTY_CYCLE          ((LEVEL_2_BLINK_PERIOD) >> 1u)
+#define LEVEL_3_DUTY_CYCLE          ((LEVEL_3_BLINK_PERIOD) >> 1u)
 
+#endif /* ENABLE_PWM_LED */
 
 /*******************************************************************************
  * EMULATED EEPROM configuration parameters
@@ -219,12 +238,24 @@ int main(void)
     /* Initialize EZI2C */
     initialize_capsense_tuner();
 
+    #if ENABLE_PWM_LED
+    /* Initialize PWM block */
+    (void)Cy_TCPWM_PWM_Init(CYBSP_PWM_HW, CYBSP_PWM_NUM, &CYBSP_PWM_config);
+    /* Enable the initialized PWM */
+    Cy_TCPWM_Enable_Multiple(CYBSP_PWM_HW, CYBSP_PWM_MASK);
+    /* Then start the PWM */
+    Cy_TCPWM_TriggerReloadOrIndex(CYBSP_PWM_HW, CYBSP_PWM_MASK);
+
+/*    Cy_TCPWM_PWM_SetPeriod0(CYBSP_PWM_HW, CYBSP_PWM_NUM,390);
+    Cy_TCPWM_PWM_SetCompare0(CYBSP_PWM_HW, CYBSP_PWM_NUM,195);*/
+    #endif
+
     /* Initialize MSC CAPSENSE */
     initialize_capsense();
 
     for (;;)
     {
-        uint32_t level_w_FR, level_wo_FR;
+       volatile uint16_t level_w_FD, level_wo_FD;
 
                 /* Scan the normal Liquid Level Widget */
         Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_WDGT_ID,
@@ -235,7 +266,7 @@ int main(void)
         }
 
         /* Scan the Foam Rejection Widget */
-        Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_FR_WDGT_ID,
+        Cy_CapSense_ScanWidget(CY_CAPSENSE_LIQUIDLEVEL0_FD_WDGT_ID,
                 &cy_capsense_context);
         /* Wait until the scan is finished */
         while (Cy_CapSense_IsBusy(&cy_capsense_context))
@@ -248,14 +279,13 @@ int main(void)
         /* Send capsense data to the Tuner */
         Cy_CapSense_RunTuner(&cy_capsense_context);
 
-
         /* store the liquid level before and after foam rejection */
-        level_wo_FR = CY_CAPSENSE_LIQUIDLEVEL0_PTRPOSITION_VALUE->x;
-        level_w_FR = CY_CAPSENSE_LIQUIDLEVEL0_FR_PTRPOSITION_VALUE->x;
+        level_wo_FD = Cy_CapSense_GetLiquidWidgetPosition(CY_CAPSENSE_LIQUIDLEVEL0_WDGT_ID,&cy_capsense_context);
+        level_w_FD=Cy_CapSense_GetFoamWidgetPosition(CY_CAPSENSE_LIQUIDLEVEL0_FD_WDGT_ID ,&cy_capsense_context);
 
-        /* keep the compiler happy */
-        (void) level_wo_FR;
-        (void) level_w_FR;
+        (void) level_wo_FD;
+        (void) level_w_FD;
+
 
         led_control();
     }
@@ -521,17 +551,63 @@ void led_control()
     uint32_t tank_status;
 
 #if (CY_CAPSENSE_LIQUID_LEVEL_TANK_REMOVAL_DETECTION_EN)
-    tank_status = Cy_CapSense_IsTankRemoved(cy_capsense_context.ptrWdContext);
+    tank_status = Cy_CapSense_IsTankRemoved(CY_CAPSENSE_LIQUIDLEVEL0_WDGT_ID, &cy_capsense_context);
     if (tank_status==1)
         Cy_GPIO_Write(CYBSP_USER_LED2_PORT, CYBSP_USER_LED2_NUM, CYBSP_LED_ON);
     else
         Cy_GPIO_Write(CYBSP_USER_LED2_PORT, CYBSP_USER_LED2_NUM, CYBSP_LED_OFF);
 #endif
 
-    if(cy_capsense_context.ptrWdConfig->ptrWdContext->status & CY_CAPSENSE_WD_ACTIVE_MASK )
-        Cy_GPIO_Write(CYBSP_USER_LED1_PORT, CYBSP_USER_LED1_NUM, CYBSP_LED_ON);
-    else
-        Cy_GPIO_Write(CYBSP_USER_LED1_PORT, CYBSP_USER_LED1_NUM, CYBSP_LED_OFF);
+#if (CY_CAPSENSE_LIQUID_LEVEL_MULTI_LEVEL_EN)
 
+/* Static variable to track the previous level (must be static to persist across function calls) */
+static uint8_t prev_liquid_level = 0xFF; 
+
+/* Get the current liquid level */
+uint8_t current_liquid_level = Cy_CapSense_GetLiquidPresenceLevel(CY_CAPSENSE_LIQUIDLEVEL0_WDGT_ID, &cy_capsense_context);
+
+/* Only update LED configuration if the level has actually changed */
+if (current_liquid_level != prev_liquid_level)
+{
+    prev_liquid_level = current_liquid_level;
+
+    switch (current_liquid_level)
+    {
+        case 1:
+            /* Level 1: Blink at Rate 1 (Slow) */
+            Cy_TCPWM_TriggerReloadOrIndex(CYBSP_PWM_HW, CYBSP_PWM_MASK);
+            Cy_TCPWM_PWM_SetPeriod0(CYBSP_PWM_HW, CYBSP_PWM_NUM, LEVEL_1_BLINK_PERIOD);
+            Cy_TCPWM_PWM_SetCompare0(CYBSP_PWM_HW, CYBSP_PWM_NUM, LEVEL_1_DUTY_CYCLE);
+            break;
+
+        case 2:
+            /* Level 2: Blink at Rate 2 (Medium) */
+            Cy_TCPWM_TriggerReloadOrIndex(CYBSP_PWM_HW, CYBSP_PWM_MASK);
+            Cy_TCPWM_PWM_SetPeriod0(CYBSP_PWM_HW, CYBSP_PWM_NUM, LEVEL_2_BLINK_PERIOD);
+            Cy_TCPWM_PWM_SetCompare0(CYBSP_PWM_HW, CYBSP_PWM_NUM, LEVEL_2_DUTY_CYCLE);
+            break;
+
+        case 3:
+            /* Level 3: Blink at Rate 3 (Fast) */
+            Cy_TCPWM_TriggerReloadOrIndex(CYBSP_PWM_HW, CYBSP_PWM_MASK);
+            Cy_TCPWM_PWM_SetPeriod0(CYBSP_PWM_HW, CYBSP_PWM_NUM, LEVEL_3_BLINK_PERIOD);
+            Cy_TCPWM_PWM_SetCompare0(CYBSP_PWM_HW, CYBSP_PWM_NUM, LEVEL_3_DUTY_CYCLE);
+            break;
+
+        case 0:
+            /* Level None: Turn LED OFF */
+            Cy_TCPWM_TriggerReloadOrIndex(CYBSP_PWM_HW, CYBSP_PWM_MASK);
+            Cy_TCPWM_PWM_SetCompare0(CYBSP_PWM_HW, CYBSP_PWM_NUM, 0);
+
+            break;
+
+        default:
+            Cy_TCPWM_TriggerReloadOrIndex(CYBSP_PWM_HW, CYBSP_PWM_MASK);
+            Cy_TCPWM_PWM_SetCompare0(CYBSP_PWM_HW, CYBSP_PWM_NUM, 0);
+            break;
+}
+
+}
+#endif
 }
 /* [] END OF FILE */

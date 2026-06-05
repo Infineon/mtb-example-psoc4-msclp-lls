@@ -1,32 +1,32 @@
 # PSOC&trade; 4: MSCLP CAPSENSE&trade; liquid level sensing
 
-This code example demonstrates an implementation of capacitive sensors to measure the depth of water-based liquids in nonconductive containers. Mounted on or near the container exterior, these sensors provide accurate, real-time monitoring of liquid fill levels, while also rejecting foam interference and eliminating the need for physical contact with the liquid.
+This code example demonstrates an implementation of capacitive sensors to measure the depth of water-based liquids in nonconductive containers. Mounted on or near the container exterior, these sensors provide accurate, real-time monitoring of liquid fill levels, while also detecting foam interference and eliminating the need for physical contact with the liquid. The code example also includes **tank removal detection** to detect when the tank is attached or removed and **liquid presence detection** to indicate whether liquid is present based on a configurable threshold.
 
- > **Note:** When using the liquid level sensing flex PCB provided with the kit, this code example delivers efficient performance for liquid level detection. However, it provides less efficient and less accurate results for foam rejection due to the thin flex PCB used. For applications that require reliable foam rejection, it is highly recommended to use FR4 PCBs. If flex PCBs must be used, thicker flex PCBs are advised to reduce parasitic capacitance between the active sensors and the shield..
+ > **Note:** When using the liquid level sensing flex PCB provided with the kit, this code example delivers efficient performance for liquid level detection. However, it provides less efficient and less accurate results for foam detection due to the thin flex PCB used. For applications that require reliable foam detection, it is highly recommended to use FR4 PCBs. If flex PCBs must be used, thicker flex PCBs are advised to reduce parasitic capacitance between the active sensors and the shield.
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-psoc4-msclp-lls)
 
-[Provide feedback on this code example.](https://yourvoice.infineon.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aS55YXNodmlAaW5maW5lb24uY29tIiwiRG9jIHZlcnNpb24iOiI2LjAuMCIsIkRvYyBMYW5ndWFnZSI6IkVuZ2xpc2giLCJEb2MgRGl2aXNpb24iOiJNQ0QiLCJEb2MgQlUiOiJJQ1ciLCJEb2MgRmFtaWx5IjoiUFNPQyJ9)
+[Provide feedback on this code example.](https://yourvoice.infineon.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aS55YXNodmlAaW5maW5lb24uY29tIiwiRG9jIHZlcnNpb24iOiI3LjAuMCIsIkRvYyBMYW5ndWFnZSI6IkVuZ2xpc2giLCJEb2MgRGl2aXNpb24iOiJNQ0QiLCJEb2MgQlUiOiJJQ1ciLCJEb2MgRmFtaWx5IjoiUFNPQyJ9)
 
 
 ## Requirements
 
-- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.7 or later 
+- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.8 or later 
 
-   > **Note:** This code example requires ModusToolbox&trade; v3.7 and is not backward compatible with older versions
+   > **Note:** This code example requires ModusToolbox&trade; v3.8 and is not backward compatible with older versions
 
-- [ModusToolbox&trade; CAPSENSE&trade; and Multi-Sense Pack](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.modustoolboxpackmultisense) for ModusToolbox&trade; v3.7 or later
+- [ModusToolbox&trade; CAPSENSE&trade; and Multi-Sense Pack](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.modustoolboxpackmultisense) for ModusToolbox&trade; v3.8 or later
 
    > **Note:** This pack contains CAPSENSE&trade; Configurator,  CAPSENSE&trade; Tuner and Sensor designer tools.
 
 - Board support package (BSP) minimum required version: 3.3.0
 - Programming language: C
-- Associated parts: [PSOC&trade; 4000T](https://www.infineon.com/products/microcontroller/32-bit-psoc-arm-cortex/psoc-4-mcu/4000/4000t), [PSOC&trade; 4100T Plus](https://www.infineon.com/products/microcontroller/32-bit-psoc-arm-cortex/psoc-4-mcu/4100/psoc-4100t-plus)
+- Associated parts: [PSOC&trade; 4000T](https://www.infineon.com/assets/row/public/documents/30/49/infineon-psoc4000t-datasheet-datasheet-en.pdf), [PSOC&trade; 4100T Plus](https://www.infineon.com/002-39671)
 
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
 
-- GNU Arm&reg; Embedded Compiler v11.3.1 (`GCC_ARM`) – Default value of `TOOLCHAIN`
+- GNU Arm&reg; Embedded Compiler v14.2.1 (`GCC_ARM`) – Default value of `TOOLCHAIN`
 - Arm&reg; Compiler v6.22 (`ARM`)
 - IAR C/C++ Compiler v9.50.2 (`IAR`)
 
@@ -219,8 +219,10 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
    Scenario                         | CY8CPROTO-040T-MS | CY8CPROTO-041TP |  LED Status
    :--------------                  | :-----            | :-----          | :-----
-   Tank detected                    | LED2              | LED2            | ON
-   Liquid Presence detected (60 mm) | LED2 & LED3       | LED2 & LED3     | ON
+   Tank detected                    | LED3              | LED3            |  ON
+   Liquid Presence detected (50 mm) | LED2 & LED3       | LED2 & LED3     |  LED2 blinks at a slow rate & LED3 ON
+   Liquid Presence detected (70 mm) | LED2 & LED3       | LED2 & LED3     |  LED2 blinks at a medium rate & LED3 ON
+   Liquid Presence detected (90 mm) | LED2 & LED3       | LED2 & LED3     |  LED2 blinks at a fast rate & LED3 ON
 <br>
 
 
@@ -264,21 +266,21 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
    The **Widget/Sensor Parameters** tab is updated with the parameters configured in the **CAPSENSE&trade; Configurator** window. The tuner displays the data from the sensor in the **Widget View** and **Graph View** tabs
 
-6. Set the **Read mode** as **Synchronized**. Navigate to the **Widget View** tab and observe the needle in the **Liquid_Level_Sensor_FR** widget changing as you pour or remove water in the container
+6. Set the **Read mode** as **Synchronized**. Navigate to the **Widget View** tab and observe the needle in the **Liquid_Level_Sensor_FD** widget changing as you pour or remove water in the container
 
    **Figure 4. Widget view of the CAPSENSE&trade; Tuner**
 
    <img src="images/tuner-lls-view.png" width="750"/>
 
-7. Add a layer of foam on top of the liquid, facilitated by a surfactant, and observe how the liquid level remains unaffected by the foam, as reported by the **Liquid_Level_Sensor_FR** widget. This demonstrates the system's ability to reject foam and maintain accurate liquid level sensing
+7. Add a layer of foam on top of the liquid, facilitated by a surfactant, and observe how the liquid level remains unaffected by the foam, as reported by the **Liquid_Level_Sensor_FD** widget. This demonstrates the system's ability to detect foam and maintain accurate liquid level sensing
 
    **Figure 5. Widget view of CAPSENSE&trade; Tuner**
 
-   <img src="images/tuner-lls-FR-view.png" width="750"/>
+   <img src="images/tuner-lls-fr-view.png" width="750"/>
 
-   > **Note:** The level in the **Liquid_Level_Sensor** changes due to the foam as it is a normal liquid level sensor and does not incorporate the foam rejection capability
+   > **Note:** The level in the **Liquid_Level_Sensor** changes due to the foam as it is a normal liquid level sensor and does not incorporate the foam detection capability
 
-8. View the raw counts of the liquid level sensors through the **Graph View** tab. The normal liquid level and foam-rejected liquid level can be observed in the position window
+8. View the raw counts of the liquid level sensors through the **Graph View** tab. The normal liquid level and foam-detected liquid level can be observed in the position window
 
    **Figure 6. Liquid level sensor position**
 
@@ -414,7 +416,7 @@ Perform the following steps to tune the **liquid level sensing** widget:
 
    Parameter | Setting | Description
    :-------- |:----------- |:-----------
-   Enable foam rejection | true | This is to enable the Foam Rejection Widget for the Foam Rejection functionality
+   Enable foam detection | true | This is to enable the Foam Detection Widget for the Foam Detection functionality
    Enable tank removal detection | true | This is to identify if the physical tank connected to the device has been removed or is not present
    Maximum level | 120 | Set this value to a multiple of the total depth of the tank. For example, this project uses a 12 cm tank. Therefore, the value may be 120, 240, or 1200; however, this project has used 120, for every 1 count, 1 mm is measured
    Sense clock divider | Default | Value is set in [Stage 2: Set sense clock frequency](#stage-2-set-sense-clock-frequency)
@@ -438,13 +440,13 @@ Perform the following steps to tune the **liquid level sensing** widget:
    <img src="images/capsense-configurator-widget-details-llw.png"/>
 
 
-   Select the **LiquidLevel0_FR** from the left pane and set the following:
+   Select the **LiquidLevel0_FD** from the left pane and set the following:
 
-   **Table 5. Initial widget parameter setting LiquidLevel0_FR**
+   **Table 5. Initial widget parameter setting LiquidLevel0_FD**
 
    Parameter | Setting | Description
    :-------- |:----------- |:-----------
-   Foam correction coefficient | 64 | To compensate for the foam correction level. To accurately calculate this value, follow the steps mentioned in the "Foam rejection coefficient calculation" section of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805)
+   Foam correction coefficient | 64 | To compensate for the foam correction level. To accurately calculate this value, follow the steps mentioned in the "Foam detection coefficient calculation" section of [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805)
    Maximum level | Same as **LiquidLevel0** widget | –
    Sense clock divider | Same as **LiquidLevel0** widget | –
    Clock source | Same as **LiquidLevel0** widget | –
@@ -462,16 +464,16 @@ Perform the following steps to tune the **liquid level sensing** widget:
 
    <br>
 
-   **Figure 15. CAPSENSE&trade; Configurator - Liquid Level Foam Rejection widget details**
+   **Figure 15. CAPSENSE&trade; Configurator - Liquid Level Foam Detection widget details**
 
-   <img src="images/capsense-configurator-widget-details-llw-FR.png"/>
+   <img src="images/capsense-configurator-widget-details-llw-fr.png"/>
 
 
 9. Go to the **Scan Configuration** tab to select the pins and scan slots. Configure the pins for electrodes using the drop down menu
 
    Ensure that the bottom-most sensor is considered as Sensor 0 (Sns0) and the top-most sensor is considered as Sensor N (SnsN)
 
-10. The electrodes for the liquid level foam rejection widget **LiquidLevel0_FR** are the same as that of the liquid level widget **LiquidLevel0**, so the sensor electrodes of **LiquidLevel0** are simply ganged to **LiquidLevel0_FR** widget's sensor electrodes
+10. The electrodes for the liquid level foam detection widget **LiquidLevel0_FD** are the same as that of the liquid level widget **LiquidLevel0**, so the sensor electrodes of **LiquidLevel0** are simply ganged to **LiquidLevel0_FD** widget's sensor electrodes
 
     **Figure 16. CAPSENSE&trade; Configurator – Scan Configuration tab**
 
@@ -584,6 +586,8 @@ The liquid presence detection feature reports the presence of a liquid, based on
 
 <img src="images/tuner-llp-view.png" width="800"/>
 
+<br>
+
 For more details on this feature, including compatible widgets and threshold configuration guidelines  see the **Liquid Presence detection** section of the [Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805).
 
 
@@ -641,7 +645,7 @@ See [AN85951 – PSOC&trade; 4 and PSOC&trade; 6 MCU CAPSENSE&trade; design guid
 
 See [AN239805 – Liquid-level sensing with PSOC&trade; 4 CAPSENSE&trade;](https://www.infineon.com/AN239805) for complete details on how to create a liquid level sensing system using CAPSENSE&trade;. It also discusses how to design the liquid level sensors.
 
-This code example uses a **liquid level sensing** widget along with its **liquid level sensing foam rejection** sub-widget to accurately measure the liquid level in the bottle as provided with the Liquid Level Sensing Kit. The **Liquid level sensing foam rejection** sub-widget provides accurate liquid level measurements while rejecting foam interference.
+This code example uses a **liquid level sensing** widget along with its **liquid level sensing foam detection** sub-widget to accurately measure the liquid level in the bottle as provided with the Liquid Level Sensing Kit. The **Liquid level sensing foam detection** sub-widget provides accurate liquid level measurements while detecting foam interference.
 
 **Figure 22. Liquid level sensor widget**
 
@@ -649,15 +653,15 @@ This code example uses a **liquid level sensing** widget along with its **liquid
 
 <br>
 
-**Figure 23. Liquid level sensor foam rejection sub-widget**
+**Figure 23. Liquid level sensor foam detection sub-widget**
 
-<img src="images/llw-FR-widget.png" width="300"/>
+<img src="images/llw-fr-widget.png" width="300"/>
 
 The design also has an EZI2C peripheral. The EZI2C slave peripheral is used to monitor the information of a sensor's raw and processed data on a PC using the CAPSENSE&trade; Tuner available in the Eclipse IDE for ModusToolbox&trade; via I2C communication.
 
-The firmware scans the **liquid level sensing** widget and the **liquid level sensing foam rejection** sub-widget indefinitely. The scan results are then processed and sent to the CAPSENSE&trade; Tuner via the EZI2C bus. The level then can be seen under the **Position** window of the CAPSENSE&trade; Tuner.
+The firmware scans the **liquid level sensing** widget and the **liquid level sensing foam detection** sub-widget indefinitely. The scan results are then processed and sent to the CAPSENSE&trade; Tuner via the EZI2C bus. The level then can be seen under the **Position** window of the CAPSENSE&trade; Tuner.
 
-> **Note:** In the current project, the **liquid level sensing** widget and the **liquid level sensing foam rejection** sub-widget are scanned separately and needs to be scanned separately; they will not work if scanned together by calling `Cy_CapSense_ScanAllWidgets` due to architectural limitations. This will get resolved in upcoming releases.
+> **Note:** In the current project, the **liquid level sensing** widget and the **liquid level sensing foam detection** sub-widget are scanned separately and needs to be scanned separately; they will not work if scanned together by calling `Cy_CapSense_ScanAllWidgets` due to architectural limitations. This will get resolved in upcoming releases.
 
 
 ### Set up the VDDA supply voltage and debug mode in Device Configurator
@@ -682,7 +686,7 @@ The firmware scans the **liquid level sensing** widget and the **liquid level se
 
    **Figure 26. EZI2C settings**
 
-   <img src="images/EZI2C_Settings.png" width="800"/>
+   <img src="images/ezi2c_settings.png" width="800"/>
    
    <br>
 
@@ -731,11 +735,12 @@ Version | Description of change
 ------- | ---------------------
 1.0.0   | New code example
 2.0.0   | Major update to support ModusToolbox&trade; v3.3. This version is not backward compatible with previous versions of ModusToolbox&trade;
-2.1.0   | Removed foam rejection calibration process
+2.1.0   | Removed foam detection calibration process
 3.0.0   | Added support for CY8CPROTO-041TP Prototyping Kit. Major update to support ModusToolbox&trade; v3.5. This version is not backward compatible with previous versions of ModusToolbox&trade;
 4.0.0   | Added one-time auto-calibration feature <br> Major update to support ModusToolbox&trade; v3.6. This version is not backward compatible with previous versions of ModusToolbox&trade;
 5.0.0   | Added tank removal detection and liquid level presence feature <br> Major update to support ModusToolbox&trade; v3.7. This version is not backward compatible with previous versions of ModusToolbox&trade;
 6.0.0   | Middleware version updated
+7.0.0   | Updated Liquid Presence detection feature; Major update to support ModusToolbox&trade; v3.8. This version is not backward compatible with previous versions of ModusToolbox&trade;
 <br>
 
 
