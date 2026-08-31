@@ -6,7 +6,7 @@ This code example demonstrates an implementation of capacitive sensors to measur
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-psoc4-msclp-lls)
 
-[Provide feedback on this code example.](https://yourvoice.infineon.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aS55YXNodmlAaW5maW5lb24uY29tIiwiRG9jIHZlcnNpb24iOiI3LjAuMCIsIkRvYyBMYW5ndWFnZSI6IkVuZ2xpc2giLCJEb2MgRGl2aXNpb24iOiJNQ0QiLCJEb2MgQlUiOiJJQ1ciLCJEb2MgRmFtaWx5IjoiUFNPQyJ9)
+[Provide feedback on this code example.](https://yourvoice.infineon.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDA1MzUiLCJTcGVjIE51bWJlciI6IjAwMi00MDUzNSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IE1TQ0xQIENBUFNFTlNFJnRyYWRlOyBsaXF1aWQgbGV2ZWwgc2Vuc2luZyIsInJpZCI6Inlhc2h2aS55YXNodmlAaW5maW5lb24uY29tIiwiRG9jIHZlcnNpb24iOiI3LjEuMCIsIkRvYyBMYW5ndWFnZSI6IkVuZ2xpc2giLCJEb2MgRGl2aXNpb24iOiJNQ0QiLCJEb2MgQlUiOiJJQ1ciLCJEb2MgRmFtaWx5IjoiUFNPQyJ9)
 
 
 ## Requirements
@@ -741,6 +741,7 @@ Version | Description of change
 5.0.0   | Added tank removal detection and liquid level presence feature <br> Major update to support ModusToolbox&trade; v3.7. This version is not backward compatible with previous versions of ModusToolbox&trade;
 6.0.0   | Middleware version updated
 7.0.0   | Updated Liquid Presence detection feature; Major update to support ModusToolbox&trade; v3.8. This version is not backward compatible with previous versions of ModusToolbox&trade;
+7.1.0   | Updated to CAPSENSE&trade; Middleware v11.0 and CAPSENSE&trade; Configurator V12.0
 <br>
 
 
